@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #################################################################################################
 #Trial 1
 #################################################################################################
@@ -9,11 +9,11 @@ library(respR)
 library(tidyverse)
 
 rm(list = ls())
-setwd("C:/Users/heref/Documents/Project stuff/LucasProject/projectrepo")
+setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 
 data1<-read.csv("Trial_1_Comp.csv",header=T)
 #data1 <- data1[-c(42751:42937), ]
-data1 <- data1[-c(1:10800),]
+#data1 <- data1[-c(1:10800),]
 chamber1.1<-inspect(data1, time = 1, oxygen = 5)#time is 1st column, oxygen is 5th column
 chamber1.2<-inspect(data1, time = 1, oxygen = 6)#time is 1st column, oxygen is 6th column
 chamber1.3<-inspect(data1, time = 1, oxygen = 7)#time is 1st column, oxygen is 7th column
@@ -23,30 +23,39 @@ chamber1.4<-inspect(data1, time = 1, oxygen = 8)#time is 1st column, oxygen is 8
 #Fish O2 Consumption
 #################################################################################################
 #?calc_rate
+i = 5
+for (i in 1:64) {
 Masu1 <- calc_rate.int(chamber1.1,
                        starts = 450,
-                       wait = 375,
+                       wait = 390,
                        measure = 75,
-                       by = "row")
-
+                       by = "row",
+                       pos = i)
+}
+for (i in 1:40) {
 Ito1 <- calc_rate.int(chamber1.2,
                       starts = 450,
-                      wait = 375,
+                      wait = 390,
                       measure = 75,
-                      by = "row")
-
+                      by = "row",
+                      pos = i)
+}
+for (i in 1:40) {
 Ito2 <- calc_rate.int(chamber1.3,
                        starts = 450,
-                       wait = 375,
+                       wait = 390,
                        measure = 75,
-                       by = "row")
-
+                       by = "row",
+                      pos = i)
+}
+for (i in 1:40) {
 Ito3 <-calc_rate.int(chamber1.4,
                       starts = 450,
-                      wait = 375,
+                      wait = 390,
                       measure = 75,
-                      by = "row")
-
+                      by = "row",
+                     pos = i)
+}
 
 #############################################################################################################
 
@@ -182,7 +191,7 @@ ggplot(data = dfMasu1, aes(x = temp, y = rate_output)) +
   scale_color_manual(values = c('#1b9e77'))
 
 mean(dfMasu1$rate_output)
-
+write.csv(dfMasu1, file = "Fish_Reps/Masu_1_Reps.csv" )
 
 
 ##################################################################################
@@ -591,4 +600,4 @@ for (i in 1:(max_temp_bin - min_temp_bin + 1)) {
 View(dfIto3)
 #posrateMasu4 <- abs(dfMasu4$rate_output)
 #plot(posrateMasu4)
->>>>>>> 4ab97b844f7b4f7c69d7f3d9be8f4017901363c7
+
