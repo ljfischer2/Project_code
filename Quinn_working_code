@@ -201,7 +201,7 @@ Rate.calc <- function(vol, mass, start_t, End_t,
   num_sets   <- total_rows %/% 450
   
   Rep_TempA <- data1$Temp[
-    seq(from = 390, by = 450, length.out = num_sets)
+    seq(from = 375, by = 450, length.out = num_sets)
   ]
   
   n <- min(nrow(df), length(Rep_TempA))
@@ -240,21 +240,21 @@ Masu1_out <- Rate.calc(vol = 330, mass = 3.3,
                       Chnum = "Ch1",
                       data1 = data1)
 
-Ito1_out  <- Rate.calc(vol = 330, mass = 5.5,
+Ito1_out  <- Rate.calc(vol = 330, mass = 3.3,
                       start_t = 390, End_t = 450,
                       FishID = Ito1,
                       Chnum = "Ch2",
                       data1 = data1)
 
 
-Ito2_out  <- Rate.calc(vol = 330, mass = 11.8,
+Ito2_out  <- Rate.calc(vol = 330, mass = 3.3,
                       start_t = 390, End_t = 450,
                       FishID = Ito2,
                       Chnum = "Ch3",
                       data1 = data1)
 
 
-Ito3_out  <- Rate.calc(vol = 330, mass = 5.6,
+Ito3_out  <- Rate.calc(vol = 330, mass = 3.3,
                        start_t = 390, End_t = 450,
                        FishID = Ito3,
                        Chnum = "Ch4",

@@ -38,7 +38,7 @@ Ito1 <- calc_rate.int(chamber1.2,
                       wait = 390,
                       measure = 75,
                       by = "row",
-                      pos = i)
+                      pos = c(1:5))
 }
 for (i in 1:40) {
 Ito2 <- calc_rate.int(chamber1.3,
