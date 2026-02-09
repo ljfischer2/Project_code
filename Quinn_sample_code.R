@@ -269,7 +269,7 @@ ggplot(Masu1_out$avg, aes(x = temp, y = rate)) +
   geom_point(size = 3) +
   geom_line() +
   labs(
-    title = "Masu1 respiration rate",
+    title = "Masu1 respiration rate (diff method)",
     x = "Temperature (°C)",
     y = expression("Oxygen consumption (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")
   ) +
