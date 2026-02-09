@@ -84,18 +84,22 @@ ggplot(avg_rate, aes(x = temp, y = rate, color = temp)) +
 
 
 
-
+i = 1
 
 ############# Trial loop for using lm ######################## Trial loop for using lm ######################## Trial loop for using lm ################
 lm_list <- NA_real_
 #lm_list[1] <- list(Masu1[["results"]][[1]][["subsets"]][[1]])
 
-i <- 1
+
 for (i in 1: length(Masu1[['subsets']])){       #subsetting all of the measure periods
   lm_list[i] <- list(Masu1[["results"]][[i]][["subsets"]][[1]])
-  lm_list[[i]][["Time"]] <- seq(from = 4, to = 240, by = 4)
+  if (length(lm_list[[i]][["Time"]]) == 60){
+    lm_list[[i]][["Time"]] <- seq(from = 4, to = 240, by = 4)
+  } else {}
 }
-lm_list <- lm_list[-c(64)]
+
+
+#lm_list <- lm_list[-c(64)]
 
 ## Temp Stuff
 total_rows <- nrow(data1)
@@ -107,17 +111,21 @@ Rep_TempA_bin <- round(Rep_TempA)
 ## Into data frame and rate convert
 lmtest <- list()
 lm_rate_df = data.frame(lmrate = 1:length(lm_list))
+
 for (i in 1:length(lm_list)){
-lmtest[i] <- list(lm(lm_list[[i]][["Ch1"]] ~ lm_list[[i]][["Time"]], data = lm_list[i]))
+lmtest[i] <- list(lm(lm_list[[i]][['Ch1']] ~ lm_list[[i]][["Time"]], data = lm_list[i]))
 lm_rate_df$temp[i] <- Rep_TempA_bin[i]
 lm_rate_df$lmrate[i] <- data.frame(rate = lmtest[[i]][["coefficients"]][[2]])
+
+
 rate <- lm_rate_df$lmrate[[i]]
 rate <- rate * 60 #mg per L per min
 rate <- rate * (325/1000) #remove vol, mg per min
 rate <- rate / 3.3 #mg per g per min
 rate <- rate *1000 #mg per kg per min
-lm_rate_df$lmratemgkgmin[i] <- rate
+lm_rate_df$lmratemgkgmin[i] <- abs(rate)
 lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
+lm_rate_df$sd[i] <- sigma(lmtest[[i]])
 }
 
 ggplot(lm_rate_df, aes(temp, lmratemgkgmin, color = rsq)) +
@@ -164,5 +172,41 @@ ggplot(avg_rate, aes(x = temp, y = rate)) +
 
 
 
+
+
+
+
+
+
+FishID <- Masu1
+
+lm_list <- NA_real_
+
+for (i in 1: length(FishID[['subsets']])){       #subsetting all of the measure periods
+  lm_list[i] <- list(FishID[["results"]][[i]][["subsets"]][[1]])
+  if (length(lm_list[[1]][['Time']]) == 60){
+    lm_list[[i]][["Time"]] <- seq(from = 4, to = 240, by = 4)
+  } else {}
+}
+length(lm_list[[1]][["Time"]]) == 60
+i = 1
+
+lmtest <- list()
+lm_rate_df = data.frame(lmrate = 1:length(lm_list))
+for (i in 1:length(lm_list)){
+  lmtest[i] <- list(lm(lm_list[[i]][['Ch1']] ~
+                         lm_list[[i]][["Time"]], data = lm_list[i]))
+  lm_rate_df$lmrate[i] <- lmtest[[i]][["coefficients"]][[2]]
+  
+  
+  rate <- lm_rate_df$lmrate[[i]]
+  rate <- rate * 60 #mg per L per min
+  rate <- rate * (vol/1000) #remove vol, mg per min
+  rate <- rate / mass #mg per g per min
+  rate <- rate *1000 #mg per kg per min
+  lm_rate_df$lmratemgkgmin[i] <- abs(rate)
+  lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
+  
+}
 
 
