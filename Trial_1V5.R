@@ -32,7 +32,7 @@ Trial_1[[i]] <- Rate.calc.lm(Fishlist$Chamber[i],
                           Fishlist$Wt[i], Trial_1_FishID[[i]], 
                           Fishlist$Channel[i], data1 )
 }
-
+Fishlist$Channel[i]
 
 ############ Trial 2 ###########
 
@@ -83,7 +83,18 @@ Trial_2_FishID<- mget(c( "Masu2", "Ito4",  "Masu3", "Masu4",
                          "Ito5",  "Ito6",  "Ito7" ))
 Trial_2 <- list()
 for (i in 1:length(Trial_2_FishID)){
-  Trial_1[[i]] <- Rate.calc.lm(Fish_T2$Chamber[i], 
+  Trial_2[[i]] <- Rate.calc.lm(Fish_T2$Chamber[i], 
                                Fish_T2$Wt[i], Trial_2_FishID[[i]], 
-                               Fish_T2$Channel[i], data2 )
+                               Fish_T2$Channel[i], 7, #num of fish in the trial
+                               data2 )
+}
+
+
+
+Trial_1_FishID<- mget(c("Masu1", "Ito1", "Ito2", "Ito3"))
+Trial_1 <- list()
+for (i in 1:length(Trial_1_FishID)){
+  Trial_1[[i]] <- Rate.calc.lm(Fishlist$Chamber[i], 
+                               Fishlist$Wt[i], Trial_1_FishID[[i]], 
+                               Fishlist$Channel[i], 4, data1 )
 }

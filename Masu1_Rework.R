@@ -171,42 +171,17 @@ ggplot(avg_rate, aes(x = temp, y = rate)) +
   theme_classic()
 
 
+############## Debug zone #####
 
+vol = 325
+mass = 3.3
+FishID = Masu1
+Chnum = 'Ch6'
+numfish = 7
+data = data2
 
+fish_T1 <- Fishlist %>%
+  filter(Fishlist$Trial == 1)
 
-
-
-
-
-FishID <- Masu1
-
-lm_list <- NA_real_
-
-for (i in 1: length(FishID[['subsets']])){       #subsetting all of the measure periods
-  lm_list[i] <- list(FishID[["results"]][[i]][["subsets"]][[1]])
-  if (length(lm_list[[1]][['Time']]) == 60){
-    lm_list[[i]][["Time"]] <- seq(from = 4, to = 240, by = 4)
-  } else {}
-}
-length(lm_list[[1]][["Time"]]) == 60
-i = 1
-
-lmtest <- list()
-lm_rate_df = data.frame(lmrate = 1:length(lm_list))
-for (i in 1:length(lm_list)){
-  lmtest[i] <- list(lm(lm_list[[i]][['Ch1']] ~
-                         lm_list[[i]][["Time"]], data = lm_list[i]))
-  lm_rate_df$lmrate[i] <- lmtest[[i]][["coefficients"]][[2]]
-  
-  
-  rate <- lm_rate_df$lmrate[[i]]
-  rate <- rate * 60 #mg per L per min
-  rate <- rate * (vol/1000) #remove vol, mg per min
-  rate <- rate / mass #mg per g per min
-  rate <- rate *1000 #mg per kg per min
-  lm_rate_df$lmratemgkgmin[i] <- abs(rate)
-  lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
-  
-}
 
 
