@@ -6,7 +6,7 @@ Rate.calc.lm <- function(vol, mass, FishID, Chnum, data) {
 lm_list <- NA_real_
 
 for (i in 1: length(FishID[['subsets']])){       #subsetting all of the measure periods
-  lm_list[i] <- list(FishID[["results"]][[i]][["subsets"]][[1]])
+  lm_list[[i]] <- list(FishID[["results"]][[i]][["subsets"]][[1]])
   if (length(lm_list[[i]][['Time']]) == 60){
     lm_list[[i]][["Time"]] <- seq(from = 4, to = 240, by = 4)
   } else {}
