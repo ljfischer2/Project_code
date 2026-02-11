@@ -25,11 +25,13 @@ Ito2  <- calc_rate.int(chamber1.3, starts = 450, wait = 390,
 Ito3  <- calc_rate.int(chamber1.4, starts = 450, wait = 390,
                        measure = 60, by = "row", pos = 1:5)
 
+
+i = 1
 Trial_1_FishID<- mget(c("Masu1", "Ito1", "Ito2", "Ito3"))
 Trial_1 <- list()
 for (i in 1:length(Trial_1_FishID)){
-Trial_1[[i]] <- Rate.calc.lm(Fishlist$Chamber[i], 
-                          Fishlist$Wt[i], Trial_1_FishID[[i]], 
+Trial_1[[i]] <- Rate.calc.lm(Fishlist$vol[i], 
+                          Fishlist$mass[i], Trial_1_FishID[[i]], 
                           Fishlist$Channel[i], data1 )
 }
 
