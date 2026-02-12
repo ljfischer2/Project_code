@@ -1,5 +1,5 @@
 
-Rate.calc.lm <- function(vol, mass, FishID, Chnum, data) {
+Rate.calc.lm <- function(vol, mass, FishID, Chnum, numfish, data) {
 
 
 
@@ -37,6 +37,7 @@ for (i in 1:length(lm_list)){
 total_rows <- nrow(data)
 num_sets   <- total_rows %/% 450
 
+if (numfish == 4){         #FishID is going to be length 7 because it is not the fishlist
 Rep_TempA <- data$Temp[
   seq(from = 390, by = 450, length.out = num_sets)
 ]
@@ -54,6 +55,46 @@ avg_rate <- lm_rate_df %>%
   ungroup()
 
 return(list(raw = lm_rate_df, avg = avg_rate))
+} else if (numfish > 4){
+  if (any(FishID %in% c(1:4))){
+    Rep_TempA <- data$TempA[
+      seq(from = 390, by = 450, length.out = num_sets)
+    ]
+    
+    n <- min(nrow(lm_rate_df), length(Rep_TempA))
+    
+    lm_rate_df <- lm_rate_df[seq_len(n), ]
+    lm_rate_df$temp <- round(Rep_TempA[seq_len(n)])
+    
+    
+    avg_rate <- lm_rate_df %>%
+      group_by(temp) %>%
+      summarise(rate = mean(lmratemgkgmin, na.rm = TRUE)) %>%
+      mutate(rate = round(rate, 3)) %>%
+      ungroup()
+    
+    return(list(raw = lm_rate_df, avg = avg_rate))
+  } else if (any(FishID %in% c(5:8))){
+    Rep_TempB <- data$TempB[
+      seq(from = 390, by = 450, length.out = num_sets)
+    ]
+    
+    n <- min(nrow(lm_rate_df), length(Rep_TempB))
+    
+    lm_rate_df <- lm_rate_df[seq_len(n), ]
+    lm_rate_df$temp <- round(Rep_TempB[seq_len(n)])
+    
+    
+    avg_rate <- lm_rate_df %>%
+      group_by(temp) %>%
+      summarise(rate = mean(lmratemgkgmin, na.rm = TRUE)) %>%
+      mutate(rate = round(rate, 3)) %>%
+      ungroup()
+  
+    return(list(raw = lm_rate_df, avg = avg_rate))
+  } else {}
+}
+
 }
 
 ########### Function Testing ############
@@ -71,9 +112,11 @@ Ito3  <- calc_rate.int(chamber1.4, starts = 450, wait = 390,
 
 
 
+Rate.calc.lm <- function(vol, mass, FishID, Chnum, numfish, data) 
+
+Masu1_lm_out <- Rate.calc.lm(325, 3.3, Masu1, Chnum  = 'Ch1', 4, data1)
+Ito1_lm_out <- Rate.calc.lm(325, 5.5, Ito1, 'Ch2', 4, data1)
+Ito2_lm_out <- Rate.calc.lm(325, 11.8, Ito2, 'Ch3', 4, data1)
+Ito3_lm_out <- Rate.calc.lm(325, 5.6, Ito3, 'Ch4', 4, data1)
 
 
-Masu1_lm_out <- Rate.calc.lm(325, 3.3, Masu1, Chnum  = 'Ch1', data1)
-Ito1_lm_out <- Rate.calc.lm(325, 5.5, Ito1, 'Ch2', data1)
-Ito2_lm_out <- Rate.calc.lm(325, 11.8, Ito2, 'Ch3', data1)
-Ito3_lm_out <- Rate.calc.lm(325, 5.6, Ito3, 'Ch4', data1)
