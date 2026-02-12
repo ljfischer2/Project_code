@@ -112,9 +112,11 @@ Ito3  <- calc_rate.int(chamber1.4, starts = 450, wait = 390,
 
 
 
+Rate.calc.lm <- function(vol, mass, FishID, Chnum, numfish, data) 
+
+Masu1_lm_out <- Rate.calc.lm(325, 3.3, Masu1, Chnum  = 'Ch1', 4, data1)
+Ito1_lm_out <- Rate.calc.lm(325, 5.5, Ito1, 'Ch2', 4, data1)
+Ito2_lm_out <- Rate.calc.lm(325, 11.8, Ito2, 'Ch3', 4, data1)
+Ito3_lm_out <- Rate.calc.lm(325, 5.6, Ito3, 'Ch4', 4, data1)
 
 
-Masu1_lm_out <- Rate.calc.lm(325, 3.3, Masu1, Chnum  = 'Ch1', data1)
-Ito1_lm_out <- Rate.calc.lm(325, 5.5, Ito1, 'Ch2', data1)
-Ito2_lm_out <- Rate.calc.lm(325, 11.8, Ito2, 'Ch3', data1)
-Ito3_lm_out <- Rate.calc.lm(325, 5.6, Ito3, 'Ch4', data1)

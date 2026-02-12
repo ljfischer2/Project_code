@@ -30,7 +30,7 @@ Trial_1 <- list()
 for (i in 1:length(Trial_1_FishID)){
 Trial_1[[i]] <- Rate.calc.lm(Fishlist$Chamber[i], 
                           Fishlist$Wt[i], Trial_1_FishID[[i]], 
-                          Fishlist$Channel[i], data1 )
+                          Fishlist$Channel[i], 4, data1 )
 }
 Fishlist$Channel[i]
 
@@ -38,9 +38,9 @@ Fishlist$Channel[i]
 
 data2 <- read.csv("Trial_2_Comp.csv",header=T)
 data2 <- data2[-c(42751:42937), ]
-Fish_T2 <- Fishlist %>%
+fish_T2 <- Fishlist %>%
   filter(Fishlist$Trial == 2)
-Fish_T2 <- Fish_T2[-c(8),]
+fish_T2 <- Fish_T2[-c(8),]
 
 #chambers <- list()
 #Trial_2_FishID <- list()
