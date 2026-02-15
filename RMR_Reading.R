@@ -34,8 +34,11 @@ Trial_1 <- list()
 for (i in 1:length(Trial_1_FishID)){
   Trial_1[[i]] <- Rate.calc.lm(fish_T1, Trial_1_FishID[[i]], 
                                fish_T1$Channel[i], 4, data1)
+  Trial_1[[i]][["raw"]]$FishID <- fish_T1$FishID[i]
+  Trial_1[[i]][["raw"]]$Species <- fish_T1$Species[i]
 }
 
+i = 1
 names(Trial_1) <- c("Masu1", "Ito1", "Ito2", "Ito3")
 
 ############ Trial 2 ###########
@@ -89,6 +92,8 @@ Trial_2 <- list()
 for (i in 1:length(Trial_2_FishID)){
   Trial_2[[i]] <- Rate.calc.lm(fish_T2, Trial_2_FishID[[i]], 
                                fish_T2$Channel[i], 7, data2)
+  Trial_2[[i]][["raw"]]$FishID <- fish_T2$FishID[i]
+  Trial_2[[i]][["raw"]]$Species <- fish_T2$Species[i]
 }
 
 names(Trial_2) <- c("Masu2", "Ito4",  "Masu3", "Masu4",
@@ -141,6 +146,8 @@ Trial_3 <- list()
 for (i in 1:length(Trial_3_FishID)){
   Trial_3[[i]] <- Rate.calc.lm(fish_T3, Trial_3_FishID[[i]], 
                                fish_T3$Channel[i], 7, data3)
+  Trial_3[[i]][["raw"]]$FishID <- fish_T3$FishID[i]
+  Trial_3[[i]][["raw"]]$Species <- fish_T3$Species[i]
 }
 
 names(Trial_3) <- c("Ito8",  "Ito9",  "Masu5", "Masu6",
@@ -192,6 +199,8 @@ Trial_4 <- list()
 for (i in 1:length(Trial_4_FishID)){
   Trial_4[[i]] <- Rate.calc.lm(fish_T4, Trial_4_FishID[[i]], 
                                fish_T4$Channel[i], 7, data4)
+  Trial_4[[i]][["raw"]]$FishID <- fish_T4$FishID[i]
+  Trial_4[[i]][["raw"]]$Species <- fish_T4$Species[i]
 }
 
 names(Trial_4) <- c("Masu11", "Ito13", "Masu12",

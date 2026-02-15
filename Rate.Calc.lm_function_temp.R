@@ -95,3 +95,4 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
   }
   
 }
+
