@@ -359,6 +359,6 @@ ggplot(Masu1_se, aes(x = temp, y = mean_rate)) +
 
 #Again, make sure to triple check everything, I think I'm interpreting the dataset correctly, but it's possible that something is wonky
 
-#you don't have to use the funtion above, I believe you can fix the issue in your for loop by double checking where you use $ and using [[]] for chamber numbers 
+#you don't have to use the function above, I believe you can fix the issue in your for loop by double checking where you use $ and using [[]] for chamber numbers 
 
 
