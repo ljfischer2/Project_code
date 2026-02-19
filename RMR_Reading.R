@@ -180,8 +180,8 @@ Masu12 <- calc_rate.int(chamber4.3, starts = 450, wait = 390,
                        measure = 55, by = "row", pos = 1)
 Masu13 <- calc_rate.int(chamber4.4, starts = 450, wait = 390,
                        measure = 55, by = "row", pos = 1) 
-#Bkg <- calc_rate.int(chamber4.5, starts = 450, wait = 390,
-#                       measure = 55, by = "row", pos = 1) 
+Blank <- calc_rate.int(chamber4.5, starts = 450, wait = 390,
+                       measure = 55, by = "row", pos = 1) 
 Ito12 <- calc_rate.int(chamber4.6, starts = 450, wait = 390,
                        measure = 55, by = "row", pos = 1)
 Masu10 <- calc_rate.int(chamber4.7, starts = 450, wait = 390,
@@ -189,10 +189,10 @@ Masu10 <- calc_rate.int(chamber4.7, starts = 450, wait = 390,
 Ito11  <- calc_rate.int(chamber4.8, starts = 450, wait = 390,
                         measure = 55, by = "row", pos = 1)
 
-Trial_4_FishID<- mget(c("Masu11", "Ito13", "Masu12",
-                        "Masu13", "Ito12", "Masu10", "Ito11" ))
+Trial_4_FishID<- mget(c("Masu11", "Ito13", "Masu12","Masu13",
+                        "Blank", "Ito12", "Masu10", "Ito11" ))
 
-row.names(fish_T4) = c(1:7)
+#row.names(fish_T4) = c(1:7)
 #row.names(fish_T4)
 
 Trial_4 <- list()
@@ -203,7 +203,7 @@ for (i in 1:length(Trial_4_FishID)){
   Trial_4[[i]][["raw"]]$Species <- fish_T4$Species[i]
 }
 
-names(Trial_4) <- c("Masu11", "Ito13", "Masu12",
+names(Trial_4) <- c("Masu11", "Ito13", "Masu12", "Blank", 
                     "Masu13", "Ito12", "Masu10", "Ito11" )
 
 

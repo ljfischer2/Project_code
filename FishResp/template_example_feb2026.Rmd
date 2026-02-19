@@ -1,0 +1,359 @@
+---
+title: "Example code to analyze respiromtery data"
+author: "Krista Kraskura (kkraskura@towson.edu)"
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+*last update Feb 2026*
+
+*Important note: Github account and local communication between github and R are required to be able to download the package.*
+
+Excellent and extensive guides for how to accomplish this and many other relevant functions can be found here: <https://happygitwithr.com/>
+
+While I am working on reworking the documentation old version can be helpful (**note:** **this is outdated in some ways; do not use the imbedded links to the code, please)**: <https://kraskura.github.io/AnalyzeResp_0/functions.html>
+
+### 1. Loading Analyze Resp
+
+-   use `install.packages("devtools")` and `install.packages("pacman")` if devtools and pacman are not installed.
+-   install necessary libraries that support function of AnalyzeResp.
+-   install AnalyzeResp from github. (I recommend doing this every time the code is run to ensure using the latest version).
+-   set workding directory for a given project, all data analysis will be performed in this directory.
+
+```{r install, messages = F, warning = F,error = FALSE}
+
+devtools::install_github("kraskura/AnalyzeResp", force = TRUE)
+
+# other libraries, dependencies:
+# install.packages("pacman")
+library(pacman)
+p_load(stats, ggplot2, scales, grDevices, graphics,
+       utils, dplyr, magrittr, pryr, tidyr, plotrix,
+       mclust, gridExtra, DescTools, tidyr)
+
+# source("/") # in no github 
+library(AnalyzeResp)
+
+# working directories
+library(here) # I like to use here when working in projects, but the working directory could be set using setwd(). 
+here() # to check the root directory
+# i_am("/Users/kristakraskura/Github_repositories/example_AnalyzeResp/template_example.Rmd")
+
+# setwd() # alternative set
+# getwd() # alternative check wd
+
+```
+
+------------------------------------------------------------------------
+
+**Setup notes**
+
+Start with a folder locally that is dedicated to data analysis. All raw text files, or excel files are located directly in this folder (not in sub-folders). Then begin analysis as described in the steps below. Ensure that the root of the set working directory is in this darta analysis folder. e.g., using R project and here() or using setwd().
+
+❕***Important note:*** *the working directory is set once at the beginnign of the file and does not need to be reset.*
+
+------------------------------------------------------------------------
+
+### 2. Create working directories to streamline organization of output files. (optional, highly recommended)
+
+This creates 📁 csv_files in the local directory now The raw files to be analyzed are still in the the folder with all newly created folders.
+
+If this function is used, then use `local_path = FALSE` argument in every other function run. This is will ensure that all output files are organized in these newly created folders.
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/organizeAnalysisLocally.html>
+
+```{r setup, messages = F, warning=F}
+organizeAnalysisLocally(SMR.folder = TRUE, MMR.folder = TRUE, MMR_SMR_AS_EPOC.folder = TRUE, BACK_RESP.folder = TRUE, SDA.folder = TRUE)
+# every argument that is 'TRUE' will create a local folder with subdirectories or subfolders.  
+# csv_files is always created.
+# generally we need all of them, except SDA if digestion experiments were not performed
+```
+
+### 3. Convert raw files from .txt (Firesting) or .csv (Witrox) format to reformatted and distilled .csv file
+
+❕***Important note:** This function can convert the oxygen concentration values to mgO~2~/L that is required for smooth analysis for the rest of the workflow.*
+
+Not all arguments have been used. If these examples do not work for you, please see documentation or reach out to Krista (email above).
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/textFileConvert.html>
+
+#### 3.1. Witrox (Loligo) files (.csv)
+
+```{r witrox convert, messages = F, warning=F, include = FALSE}
+
+textFileConvert(txt_file = "oct9_2023_1200_mmr.csv",
+                local_path = FALSE,
+                type_file = "Witrox_2023", # < ensure to specify this for Witrox files.
+                N_Ch = 4,
+                convert_units = TRUE,
+                units_from = "pct", # units of oxygen measured 
+                units_to = "mg/L",
+                salinity = 0,
+                atm_pressure = 1)
+
+textFileConvert(txt_file = "oct9_2023_1200_smr.csv",
+                local_path = FALSE,
+                type_file = "Witrox_2023",
+                N_Ch = 4,
+                convert_units = T,
+                units_from = "pct",
+                units_to = "mg/L",
+                salinity = 0,
+                atm_pressure = 1)
+
+textFileConvert(txt_file = "dec13_2023_1200_back.csv",
+                local_path = FALSE,
+                type_file = "Witrox_2023",
+                N_Ch = 4,
+                nrowSkip = 41, # witrox
+                convert_units = T,
+                units_from = "pct",
+                units_to = "mg/L",
+                salinity = 0,
+                atm_pressure = 1)
+
+```
+
+#### 3.2. Firesting (.txt) files (2017 - 2023)
+
+```{r firesting convert , messages = F, warning=F, include = FALSE}
+
+textFileConvert(txt_file = "Nov30_2022_PAAR_box3_back1.txt",
+                local_path = FALSE,
+                type_file = "Firesting_pre2023",
+                N_Ch = 4,
+                convert_units = TRUE,
+                units_from = "pct", # units of oxygen measured 
+                units_to = "mg/L",
+                salinity = 35,
+                atm_pressure = 1)
+
+textFileConvert(txt_file = "Dec01_2022_PAAR_box3_sda.txt",
+                local_path = FALSE,
+                type_file = "Firesting_pre2023",
+                N_Ch = 4,
+                convert_units = TRUE,
+                units_from = "pct",
+                units_to = "mg/L",
+                salinity = 35,
+                atm_pressure = 1)
+
+textFileConvert(txt_file = "Dec03_2022_PAAR_box3_back2.txt",
+                local_path = FALSE,
+                type_file = "Firesting_pre2023",
+                N_Ch = 4,
+                convert_units = T,
+                units_from = "pct",
+                units_to = "mg/L",
+                salinity = 35,
+                atm_pressure = 1)
+
+```
+
+#### 3.2. Firesting (.txt) files (2023 - until)
+
+```{r firesting convert new, messages = F, warning=F}
+
+textFileConvert(txt_file = "2024-07-14_110238_Respo Round 3.txt",
+                local_path = FALSE,
+                type_file = "Firesting_2023",
+                N_Ch = 4,
+                temperature_Ch = 3,
+                convert_units = TRUE,
+                units_from = "pct", # units of oxygen measured
+                units_to = "mg/L",
+                salinity = 35,
+                atm_pressure = 1)
+
+```
+
+### 4. MMR analysis
+
+In the MMR function the maximum metabolic rate is analyzed in several different periods (e.g., the length of the entire cycle, every 60, 90, and 120 s time period, ie. “sliding window”; Little et al 2020 <https://www.journals.uchicago.edu/doi/10.1086/708673>).
+
+Then you may select any of these that is best suited for your experimental design.
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/MMR.html>
+
+```{r manually-timed, messages = F, warning=F}
+
+MMR(data.MMR = "oct9_2023_1200_mmr_converted.csv",
+    cycles = 4, # add an error message on this - the number of cycles and the #s must match below
+    cycle_start = c(0, 12.5, 24, 35), # (fish1, fish2, )
+    cycle_end = c(10, 21, 31, 45),
+    mmr_Ch1 = 1,
+    mmr_Ch2 = 2,
+    mmr_Ch3 = 3,
+    mmr_Ch4 = 4, # add an error message on this(wrong cycle)
+    N_Ch = 4,
+    local_path = FALSE,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"))
+
+```
+
+### 5. SMR analysis
+
+This function is well suited to extract slopes from any automated measurement period (i.e., repeat cycles of flush:measure, wait period can be incorporated too). These are commonly used for overnight measurements to get regression slopes for to calculate SMR/RMR, SDA, and even background if it was done on an automated timer.
+
+Generally this function simply *chops* file to extract only useful segments of data representing oxygen \~ time slopes. This is done for the entire file. If flush:measure periods are changed in between the respirometry, those file need to split and run seperately, or everything will get out of sequence and slopes will not be properly analyzed (this can be quickly identified during visual assessment of data).
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/SMR.html>
+
+Contact Krista if you need to do automaatic inventory for SMR (e.g, exclude slopes, only take specific sections of slopes, etc). We have an inventory file that can help do this in a traceable automatic way.
+
+```{r automated-cycles, messages = F, warning=F}
+# study 1 -------
+SMR(data = "dec07_2023_300_back_converted.csv",
+    cycle_end = 9,
+    cycle_start = 1,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = TRUE,
+    sda_data = FALSE)
+
+SMR(data = "dec13_2023_1200_back_converted.csv",
+    cycle_end = 10,
+    cycle_start = 1,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = FALSE,
+    sda_data = TRUE)
+
+# study 2 -------
+# for SDA
+SMR(data = "Dec01_2022_PAAR_box3_sda_converted.csv",
+    cycle_end = 15,
+    cycle_start = 7,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = FALSE,
+    sda_data = TRUE) # <<<<<<
+
+# SDA back post
+SMR(data = "Dec03_2022_PAAR_box3_back2_converted.csv",
+    cycle_end = 15,
+    cycle_start = 7,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = TRUE,
+    sda_data = TRUE) # <<<<<
+
+# SDA back pre 
+SMR(data = "Nov30_2022_PAAR_box3_back1_converted.csv",
+    cycle_end = 15,
+    cycle_start = 7,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = TRUE,
+    sda_data = TRUE)
+
+# study 3 -------
+# SMR
+SMR(data = "oct9_2023_1200_smr_converted.csv",
+    cycle_end = 20,
+    cycle_start = 5,
+    first_cycle = "flush",
+    chop_start = 30/60,
+    chop_end = 30/60,
+    date_format = c("%m/%d/%Y %H:%M:%S", "GMT"), # PDT
+    local_path = FALSE,
+    background_data = FALSE,
+    sda_data = FALSE,
+    inventory_data = "AUTO_inventory_template2025.csv")
+
+```
+
+### 6. Analysis of Aerobic scope (AS), MMR, SMR and recovery
+
+This function relies on outputs from SMR and/or MMR functions to estimates aerobic metabolic performances in individual animals: MMR, SMR, EPOC (recovery), and Absolute Aerobic Scope.
+
+Common troubleshooting needs:
+
+-   If the channel was not used (no animal), add that channel to the `drop_ch = c(1)` (any channel, up to any 3. But make sure to still add 4 values in `AnimalID, BW.animal, and resp.V.`
+
+-   Adjust r2 thresholds, data that not meet the set requirements is tossed and may lead to very few data points. This will lead to issues estimating recovery (e.g., EPOC)
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/MMR_SMR_AS_EPOC.html>
+
+```{r final-outputs, messages = F, warning=F}
+# relying on defaults
+MMR_SMR_AS_EPOC(data.MMR = "oct9_2023_1200_mmr_converted_analyzed.csv",
+                data.SMR = "oct9_2023_1200_smr_converted_analyzed.csv",
+                AnimalID = c("NA","ID8","ID9","ID10"),
+                BW.animal = c(NA,0.014,0.014,0.014),
+                resp.V = c(NA, 0.930, 0.930, 0.930),
+                r2_threshold_smr = 0.7,
+                r2_threshold_mmr = 0.7,
+                min_length_mmr = 1,
+                drop_ch = c(1), # drop all that were not used
+                background_prior  = "oct10_2023_1200_back_post_converted_analyzed_HIGHback_wrongdate.csv",
+                background_post  = "oct10_2023_1200_back_post_converted_analyzed_HIGHback.csv",
+                local_path = F,
+                match_background_Ch = TRUE,
+                MLND = F)
+
+# Combining multiple MMR files, relying on defaults otherwise
+MMR_SMR_AS_EPOC(data.MMR = c("oct9_2023_1200_mmr_converted_analyzed1.csv", 
+                            "oct9_2023_1200_mmr_converted_analyzed2.csv",
+                            "oct9_2023_1200_mmr_converted_analyzed3.csv",
+                            "oct9_2023_1200_mmr_converted_analyzed4.csv"),
+                data.SMR = "oct9_2023_1200_smr_converted_analyzed.csv",
+                AnimalID = c("ID7","ID8","ID9","ID10"),
+                BW.animal = c(0.14,0.14,0.14,0.14),
+                resp.V = c(0.930, 0.930, 0.930, 0.930),
+                r2_threshold_smr = 0.7,
+                r2_threshold_mmr = 0.7,
+                min_length_mmr = 120,
+                local_path = F,
+                MLND = F)
+
+```
+
+### 7. Specific Dynamic Action (SDA) analysis
+
+More soon!
+
+🔗 Info: <https://kraskura.github.io/AnalyzeResp/reference/SDA.html>
+
+```{r final-SDA, messages = F, warning=F}
+
+SDA(data.SDA = "Dec01_2022_PAAR_box3_sda_converted_analyzed.csv",
+    AnimalID = c("A", "B", "C", "D"),
+    BW.animal = c(0.1, 0.2, 0.3, 0.4),
+    resp.V = c(1, 1, 1, 1),
+    r2_threshold_smr = 0.6,
+    sda_threshold_level = c("SMR_mean10minVal", 1),
+    SMR_calc = TRUE,
+    # SMR_vals = c(NULL, NULL, NULL, NULL),
+    drop_ch = c(3),
+    N_Ch = 4,
+    # end_SDA_Ch = NA, # c(2, 2, 2, 2) in hours 
+    MLND = FALSE,
+    verbose.MLND = FALSE,
+    background_prior = "Nov30_2022_PAAR_box3_back1_converted_analyzed.csv",
+    background_post = "Dec03_2022_PAAR_box3_back2_converted_analyzed.csv",
+    match_background_Ch = TRUE,
+    local_path = FALSE,
+    handling_delay = c(2,2,2,2),
+    begin_smr_hr_zero = TRUE)
+
+
+```
