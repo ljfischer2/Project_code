@@ -137,7 +137,7 @@ avg_norsqfilter <- raw_df %>%
   
   
 
-#length(unique(subrsq_rm$temp))  #count number of unique temps
+#############length(unique(subrsq_rm$temp))  #count number of unique temps
 subrsq_rm90 <- raw_df %>%
     filter(rsq > 0.90) %>%
     filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) %>% # bad apples
@@ -150,6 +150,8 @@ subrsq_rm90 <- raw_df %>%
   )
 
 
+
+####################graphing values above rsq = 0.9
 pos <- position_dodge(width = 0.5)
 ggplot(subrsq_rm90, aes(x = temp, y = rate, color = Species)) +
   geom_point(size = 3, position = pos) +
@@ -169,18 +171,7 @@ ggplot(subrsq_rm90, aes(x = temp, y = rate, color = Species)) +
 
 
 
-
-  group_by(Species, temp) %>%
-  summarise(
-    n = n(),
-    rate = mean(lmratemgkgmin, na.rm = TRUE),
-    sd = sd(lmratemgkgmin, na.rm = T),
-    .groups = "drop"
-  )
-
-
-
-
+# Checking for... IDK 
   subrsq_rm95b <- raw_df %>%
     filter(rsq > 0.95) %>%
     filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) %>% # bad apples
@@ -191,4 +182,115 @@ ggplot(subrsq_rm90, aes(x = temp, y = rate, color = Species)) +
       sd = sd(lmratemgkgmin, na.rm = T),
       .groups = "drop"
     )
+
+
+  
+################# Lm modelling ###################
+mod1 <- lm(lmratemgkgmin ~ temp + FishID, data = raw_df)
+
+# ChatGPT log-linked
+  ggplot(data = raw_df, aes(x = temp, y = lmratemgkgmin, color = Species)) + 
+    geom_point(alpha = 0.5, size = 2) +
+    geom_smooth(method = "glm",
+                method.args = list(family = gaussian(link = "log")),
+                formula = y ~ poly(x^2), 
+                se = FALSE)
+
+# All raw data  
+  ggplot(raw_df, aes(x = temp, y = lmratemgkgmin, color = Species)) +
+    geom_point() +
+    geom_smooth( se=FALSE, 
+                method="lm", formula = y ~ poly(x^2)) +
+    facet_wrap(~Species) +
+    theme_minimal()
+  
+# rsq > 0.95, Taking out bad apple fish, avg temp
+  ggplot(subrsq_rm95b, aes(x = temp, y = rate, color = Species)) +
+    geom_point() +
+    geom_smooth( se=FALSE, 
+                 method="lm", formula = y ~ poly(x^2)) +
+    facet_wrap(~Species) +
+    theme_minimal()
+  
+  
+  
+# rsq > 0.9, no Bad apples
+plot_data <- raw_df %>%
+    filter(rsq > 0.90) %>%
+    filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) # bad apples
+
+ggplot(plot_data, aes(x = temp, y = lmratemgkgmin, color = Species)) +
+  geom_point() +
+  geom_smooth( se=FALSE, 
+               method="lm", formula = y ~ poly(x^2)) +
+  facet_wrap(~Species) +
+  theme_minimal()
+
+# rsq > 0.95, no Bad apples
+plot_data <- raw_df %>%
+  filter(rsq > 0.95) %>%
+  filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) # bad apples
+
+ggplot(plot_data, aes(x = temp, y = lmratemgkgmin, color = Species)) +
+  geom_point() +
+  geom_smooth( se=FALSE, 
+               method="lm", formula = y ~ poly(x^2)) +
+  labs(title = "rsq > 0.95, no BA") +
+  facet_wrap(~Species) +
+  theme_minimal()
+
+
+
+#### Facet Wrap By FishID
+plot_data <- raw_df %>%
+  filter(rsq > 0.95) %>%
+  filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) # bad apples
+
+ggplot(plot_data, aes(x = temp, y = lmratemgkgmin, color = Species)) +
+  geom_point() +
+  geom_smooth( se=FALSE, 
+               method="lm", formula = y ~ poly(x^3)) +
+  labs(title = "rsq > 0.95, no BA") +
+  facet_wrap(~FishID) +
+  theme_minimal()
+
+
+
+#### Facet Wrap By FishID
+plot_data <- raw_df %>%
+  filter(rsq > 0.90) %>%
+  filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2')) # bad apples
+
+rep_count <- plot_data %>%
+  group_by(FishID) %>%
+  mutate(n = n()) %>%
+  ungroup()
+
+ggplot(plot_data, aes(x = temp, y = lmratemgkgmin, color = Species)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth( se=FALSE, 
+               method="lm", formula = y ~ poly(x^3)) +
+  labs(title = "rsq > 0.90, no BA") +
+  facet_wrap(~paste0(FishID, " (n = ", rep_count$n, ")")) +
+  theme_minimal()
+
+
+
+########## Creating models of the raw data 
+
+# Model 1: Fixed slope, random intercept
+fit1 <- lme(lmratemgkgmin ~ temp, random = ~1 | FishID, data = raw_df)
+
+# Model 2: Random effects for intercept and slope, no interaction for Length
+fit2 = lme(lmratemgkgmin ~ temp, random = ~temp | FishID, data = raw_df)
+
+
+# Model 3: Random intercept and slope, with interaction term for Length
+fit3 = lme(lmratemgkgmin ~ temp * rep, random = ~temp | FishID, data = raw_df)
+
+
+
+
+anova(fit1, fit2, fit3)  
+
 
