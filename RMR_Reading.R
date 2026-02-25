@@ -16,6 +16,7 @@ chamber1.2<-inspect(data1, time = 1, oxygen = 6)#time is 1st column, oxygen is 6
 chamber1.3<-inspect(data1, time = 1, oxygen = 7)#time is 1st column, oxygen is 7th column
 chamber1.4<-inspect(data1, time = 1, oxygen = 8)#time is 1st column, oxygen is 8th column
 
+
 Masu1 <- calc_rate.int(chamber1.1, starts = 450, wait = 390,
                        measure = 60, by = "row", pos = 1:5)
 Ito1  <- calc_rate.int(chamber1.2, starts = 450, wait = 390,
@@ -72,7 +73,7 @@ chamber2.8<-inspect(data2, time = 1, oxygen = 13)
 #print(Fish_T2$FishID)
 
 Masu2 <- calc_rate.int(chamber2.1, starts = 450, wait = 390,
-                   measure = 60, by = "row", pos = 1)
+                   measure = 60, by = "row", pos = 1:5)
 Ito4 <- calc_rate.int(chamber2.2, starts = 450, wait = 390,
                       measure = 60, by = "row", pos = 1)
 Masu3 <- calc_rate.int(chamber2.3, starts = 450, wait = 390,
@@ -173,7 +174,11 @@ chamber4.8<-inspect(data4, time = 1, oxygen = 13)
 print(fish_T4$FishID)
 
 Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 390,
-                      measure = 55, by = "row", pos = 1)
+                      measure = 55, by = "row", pos = 1:5)
+
+Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 390,
+                        measure = 55, by = "row", pos = 30:35)
+
 Ito13 <- calc_rate.int(chamber4.2, starts = 450, wait = 390,
                       measure = 55, by = "row", pos = 1)
 Masu12 <- calc_rate.int(chamber4.3, starts = 450, wait = 390,
@@ -190,7 +195,7 @@ Ito11  <- calc_rate.int(chamber4.8, starts = 450, wait = 390,
                         measure = 55, by = "row", pos = 1)
 
 Trial_4_FishID<- mget(c("Masu11", "Ito13", "Masu12","Masu13",
-                        "Blank", "Ito12", "Masu10", "Ito11" ))
+                        "Ito12", "Masu10", "Ito11" ))
 
 #row.names(fish_T4) = c(1:7)
 #row.names(fish_T4)
@@ -203,9 +208,27 @@ for (i in 1:length(Trial_4_FishID)){
   Trial_4[[i]][["raw"]]$Species <- fish_T4$Species[i]
 }
 
-names(Trial_4) <- c("Masu11", "Ito13", "Masu12", "Blank", 
+names(Trial_4) <- c("Masu11", "Ito13", "Masu12", 
                     "Masu13", "Ito12", "Masu10", "Ito11" )
 
 
 Trial_4_old <- Trial_4
 
+
+
+######## Combining Data #######
+
+Trial_All <- c(Trial_1, Trial_2, Trial_3, Trial_4)
+
+#Trial_All[["Masu1"]][["raw"]]
+
+FishID_string <- Fishlist%>%
+  filter(!FishID %in% c("Char1", "Masu8", 'Blank'))
+
+FishID_str <- FishID_string$FishID
+
+raw_list <- list()
+for (i in 1:length(Trial_All)){
+  raw_list[[i]] <- Trial_All[[i]][['raw']]
+}
+raw_df <- bind_rows(raw_list)
