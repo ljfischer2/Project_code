@@ -1,7 +1,7 @@
 ﻿FishID,Length,mass,FSID,Channel,vol,Species,Trial
 Masu1,70,3.3,1,Ch1,350,Masu,1
 Ito1,83,5.5,2,Ch2,350,Ito,1
-Ito2,108,11.8,3,Ch3,1350,Ito,1
+Ito2,108,11.8,3,Ch3,350,Ito,1
 Ito3,84,5.6,4,Ch4,350,Ito,1
 Masu2,77,5.6,1,Ch1,350,Masu,2
 Ito4,90,6.8,2,Ch2,1350,Ito,2

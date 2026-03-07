@@ -4,7 +4,7 @@ Chnum <- 'Ch1'
 numfish <- 1
 data <- data1
 
-Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
+Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
   
   
   
@@ -29,8 +29,8 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
     
     rate <- lm_rate_df$lmrate[[i]]
     rate <- rate * 60 #mg per L per min
-    rate <- rate * (fishlist$vol/1000) #remove vol, mg per min
-    rate <- rate / fishlist$mass #mg per g per min
+    rate <- rate * (vol/1000) #remove vol, mg per min
+    rate <- rate / mass #mg per g per min
     rate <- rate *1000 #mg per kg per min
     lm_rate_df$lmratemgkgmin[i] <- abs(rate)
     lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared

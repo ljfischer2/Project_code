@@ -33,14 +33,18 @@ fish_T1 <- Fishlist %>%
 Trial_1_FishID<- mget(c("Masu1", "Ito1", "Ito2", "Ito3"))
 Trial_1 <- list()
 for (i in 1:length(Trial_1_FishID)){
-  Trial_1[[i]] <- Rate.calc.lm(fish_T1, Trial_1_FishID[[i]], 
-                               fish_T1$Channel[i], 4, data1)
+  Trial_1[[i]] <- Rate.calc.lm(fish_T1$vol[i], fish_T1$mass[i], fish_T1,
+                               Trial_1_FishID[[i]], fish_T1$Channel[i], 4, data1)
   Trial_1[[i]][["raw"]]$FishID <- fish_T1$FishID[i]
   Trial_1[[i]][["raw"]]$Species <- fish_T1$Species[i]
+  Trial_1[[i]][["raw"]]$trial <- 1
 }
 
-i = 1
+
+
 names(Trial_1) <- c("Masu1", "Ito1", "Ito2", "Ito3")
+
+
 
 ############ Trial 2 ###########
 
@@ -91,10 +95,11 @@ Trial_2_FishID<- mget(c("Masu2", "Ito4",  "Masu3", "Masu4",
                          "Ito5",  "Ito6",  "Ito7" ))
 Trial_2 <- list()
 for (i in 1:length(Trial_2_FishID)){
-  Trial_2[[i]] <- Rate.calc.lm(fish_T2, Trial_2_FishID[[i]], 
-                               fish_T2$Channel[i], 7, data2)
+  Trial_2[[i]] <- Rate.calc.lm(fish_T2$vol[i], fish_T2$mass[i], fish_T2,
+                               Trial_2_FishID[[i]], fish_T2$Channel[i], 7, data2)
   Trial_2[[i]][["raw"]]$FishID <- fish_T2$FishID[i]
   Trial_2[[i]][["raw"]]$Species <- fish_T2$Species[i]
+  Trial_2[[i]][["raw"]]$trial <- 2
 }
 
 names(Trial_2) <- c("Masu2", "Ito4",  "Masu3", "Masu4",
@@ -104,6 +109,8 @@ names(Trial_2) <- c("Masu2", "Ito4",  "Masu3", "Masu4",
 
 data3 <- read.csv("Trial_3_Comp.csv",header=T)
 data3 <- data3[-c(43201:43226), ]
+data3 <- data3[-c(1:13250),]
+data3 <- data3[-c(20251:29950),]
 fish_T3 <- Fishlist %>%
   filter(Fishlist$Trial == 3)
 fish_T3 <- fish_T3[-c(7),]
@@ -120,21 +127,21 @@ chamber3.8<-inspect(data3, time = 1, oxygen = 13)
 
 #print(fish_T3$FishID)
 
-Ito8 <- calc_rate.int(chamber3.1, starts = 450, wait = 390,
+Ito8 <- calc_rate.int(chamber3.1, starts = 450, wait = 375,
                        measure = 60, by = "row", pos = 1)
-Ito9 <- calc_rate.int(chamber3.2, starts = 450, wait = 390,
+Ito9 <- calc_rate.int(chamber3.2, starts = 450, wait = 375,
                       measure = 60, by = "row", pos = 1)
-Masu5 <- calc_rate.int(chamber3.3, starts = 450, wait = 390,
+Masu5 <- calc_rate.int(chamber3.3, starts = 450, wait = 375,
                        measure = 60, by = "row", pos = 1)
-Masu6 <- calc_rate.int(chamber3.4, starts = 450, wait = 390,
+Masu6 <- calc_rate.int(chamber3.4, starts = 450, wait = 375,
                        measure = 60, by = "row", pos = 1) 
-Masu9 <- calc_rate.int(chamber3.5, starts = 450, wait = 390,
+Masu9 <- calc_rate.int(chamber3.5, starts = 450, wait = 375,
                        measure = 60, by = "row", pos = 1) 
-Masu7 <- calc_rate.int(chamber3.6, starts = 450, wait = 390,
+Masu7 <- calc_rate.int(chamber3.6, starts = 450, wait = 375,
                       measure = 60, by = "row", pos = 1)
-#Masu8 <- calc_rate.int(chamber3.7, starts = 450, wait = 390,
+#Masu8 <- calc_rate.int(chamber3.7, starts = 450, wait = 375,
 #                      measure = 60, by = "row", pos = 1)
-Ito10  <- calc_rate.int(chamber3.8, starts = 450, wait = 390,
+Ito10  <- calc_rate.int(chamber3.8, starts = 450, wait = 375,
                        measure = 60, by = "row", pos = 1)
 
 Trial_3_FishID<- mget(c("Ito8",  "Ito9",  "Masu5", "Masu6",
@@ -145,14 +152,17 @@ row.names(fish_T3) = c(1:7)
 
 Trial_3 <- list()
 for (i in 1:length(Trial_3_FishID)){
-  Trial_3[[i]] <- Rate.calc.lm(fish_T3, Trial_3_FishID[[i]], 
-                               fish_T3$Channel[i], 7, data3)
+  Trial_3[[i]] <- Rate.calc.lm(fish_T3$vol[i], fish_T3$mass[i],fish_T3, 
+                               Trial_3_FishID[[i]], fish_T3$Channel[i], 7, data3)
   Trial_3[[i]][["raw"]]$FishID <- fish_T3$FishID[i]
   Trial_3[[i]][["raw"]]$Species <- fish_T3$Species[i]
+  Trial_3[[i]][["raw"]]$trial <- 3
 }
 
 names(Trial_3) <- c("Ito8",  "Ito9",  "Masu5", "Masu6",
                     "Masu9", "Masu7", "Ito10")
+
+
 ############# Trial 4 #########
 
 data4 <- read.csv("Trial_4_Comp.csv",header=T)
@@ -173,39 +183,38 @@ chamber4.8<-inspect(data4, time = 1, oxygen = 13)
 
 print(fish_T4$FishID)
 
-Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 390,
-                      measure = 55, by = "row", pos = 1:5)
-
-Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 390,
-                        measure = 55, by = "row", pos = 30:35)
-
-Ito13 <- calc_rate.int(chamber4.2, starts = 450, wait = 390,
+Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 370,
+                      measure = 55, by = "row", pos = i)
+Masu11 <- calc_rate.int(chamber4.1, starts = 450, wait = 370,
+                        measure = 55, by = "row", pos = 1)
+Ito13 <- calc_rate.int(chamber4.2, starts = 450, wait = 370,
                       measure = 55, by = "row", pos = 1)
-Masu12 <- calc_rate.int(chamber4.3, starts = 450, wait = 390,
+Masu12 <- calc_rate.int(chamber4.3, starts = 450, wait = 370,
                        measure = 55, by = "row", pos = 1)
-Masu13 <- calc_rate.int(chamber4.4, starts = 450, wait = 390,
+Masu13 <- calc_rate.int(chamber4.4, starts = 450, wait = 370,
                        measure = 55, by = "row", pos = 1) 
-Blank <- calc_rate.int(chamber4.5, starts = 450, wait = 390,
-                       measure = 55, by = "row", pos = 1) 
-Ito12 <- calc_rate.int(chamber4.6, starts = 450, wait = 390,
+#Blank <- calc_rate.int(chamber4.5, starts = 450, wait = 370,
+#                       measure = 55, by = "row", pos = 1) 
+Ito12 <- calc_rate.int(chamber4.6, starts = 450, wait = 370,
                        measure = 55, by = "row", pos = 1)
-Masu10 <- calc_rate.int(chamber4.7, starts = 450, wait = 390,
+Masu10 <- calc_rate.int(chamber4.7, starts = 450, wait = 370,
                       measure = 55, by = "row", pos = 1)
-Ito11  <- calc_rate.int(chamber4.8, starts = 450, wait = 390,
+Ito11  <- calc_rate.int(chamber4.8, starts = 450, wait = 370,
                         measure = 55, by = "row", pos = 1)
 
 Trial_4_FishID<- mget(c("Masu11", "Ito13", "Masu12","Masu13",
                         "Ito12", "Masu10", "Ito11" ))
 
-#row.names(fish_T4) = c(1:7)
-#row.names(fish_T4)
+row.names(fish_T4) = c(1:7)
+row.names(fish_T4)
 
 Trial_4 <- list()
 for (i in 1:length(Trial_4_FishID)){
-  Trial_4[[i]] <- Rate.calc.lm(fish_T4, Trial_4_FishID[[i]], 
-                               fish_T4$Channel[i], 7, data4)
+  Trial_4[[i]] <- Rate.calc.lm(fish_T4$vol[i], fish_T4$mass[i],fish_T4, 
+                               Trial_4_FishID[[i]], fish_T4$Channel[i], 7, data4)
   Trial_4[[i]][["raw"]]$FishID <- fish_T4$FishID[i]
   Trial_4[[i]][["raw"]]$Species <- fish_T4$Species[i]
+  Trial_4[[i]][["raw"]]$trial <- 4
 }
 
 names(Trial_4) <- c("Masu11", "Ito13", "Masu12", 
@@ -232,3 +241,7 @@ for (i in 1:length(Trial_All)){
   raw_list[[i]] <- Trial_All[[i]][['raw']]
 }
 raw_df <- bind_rows(raw_list)
+
+
+raw_df <- raw_df %>%
+  filter(!FishID %in% c('Ito11'))

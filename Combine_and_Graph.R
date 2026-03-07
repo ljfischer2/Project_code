@@ -3,6 +3,11 @@ library(lme4)
 library(nlme)
 pos <- position_dodge(width = 0.5)
 
+
+
+
+
+
 ##### Filtering  & Plotting by species######
 ######### rsq > 0.90
 plot_data <-  raw_df%>%
@@ -10,8 +15,10 @@ plot_data <-  raw_df%>%
   group_by(temp, Species) %>%
   summarise(rate = mean(lmratemgkgmin, na.rm = TRUE,
                         ),
-            sd = sd(lmratemgkgmin, na.rm = T)) %>%
-  mutate(rate = round(rate, 3))
+            sd = sd(lmratemgkgmin, na.rm = T),
+            .groups = "drop") %>%
+  mutate(rate = round(rate, 3),
+         .groups = "drop")
   
 
 
@@ -28,7 +35,8 @@ ggplot(plot_data, aes(x = temp, y = rate, color = Species)) +
     color = "Fish"
   ) +
   xlim(10, 25) +
-  theme_classic()
+  theme_classic() + 
+  facet_wrap(FishID)
 
 #################### rsq > 0.95
 plot_data <-  raw_df%>%
@@ -143,8 +151,8 @@ avg_rate_raw <-  raw_df%>%
       y = expression("Mean Oxygen consumption (mg O"[2]*" kg"^{-1}*" min"^{-1}*")"),
       color = "Fish"
     ) +
-    xlim(10,25)
-    ylim(0, 30) +
+    xlim(10,25) +
+    ylim(0, 15) +
     facet_wrap(~FishID) +
     theme_classic()
 
@@ -153,8 +161,6 @@ avg_rate_raw <-  raw_df%>%
   
   avg_rate_raw <-  raw_df%>%
     filter(rsq >0.90) %>%
-    filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2',
-                          'Masu11', 'Ito13')) %>% # bad apples
     group_by(temp,FishID) %>%
     summarise(rate = mean(lmratemgkgmin, na.rm = TRUE),
               sd = sd(lmratemgkgmin, na.rm = T)) %>%
@@ -171,8 +177,6 @@ avg_rate_raw <-  raw_df%>%
 #    mutate(rate = round(rate, 3))
   
 avg_norsqfilter <- raw_df %>%
-    filter(!FishID %in% c("Masu13", "Masu12", "Ito2",
-                          'Masu11','Ito13')) %>%
     group_by(temp, FishID, Species) %>%
     summarise(rate = mean(lmratemgkgmin, na.rm = TRUE),
               sd   = sd(lmratemgkgmin, na.rm = TRUE),
@@ -209,8 +213,6 @@ avg_norsqfilter <- raw_df %>%
 #############length(unique(subrsq_rm$temp))  #count number of unique temps
 subrsq_rm90 <- raw_df %>%
     filter(rsq > 0.90) %>%
-    filter(!FishID %in% c("Masu13", 'Masu12', 'Ito2',
-                          'Masu11','Ito13')) %>% # bad apples
     group_by(Species, temp) %>%
     summarise(
       n = n(),
