@@ -5,6 +5,22 @@ pos <- position_dodge(width = 0.5)
 
 
 
+########### Background Rate checking ############
+ggplot(Blank_df, aes(x = rep, y = lmratemgkgmin)) + 
+  geom_point()
+
+ggplot(Blank_df, aes(x = rep, y = temp)) + 
+  geom_point()
+
+
+
+
+############# Rates over time ##########
+
+ggplot(raw_df, aes(x = rep, y = lmratemgkgmin)) + 
+  geom_point(size = 2) + 
+  facet_wrap(~FishID)
+  
 
 
 
@@ -13,12 +29,10 @@ pos <- position_dodge(width = 0.5)
 plot_data <-  raw_df%>%
   filter(rsq >0.90) %>%
   group_by(temp, Species) %>%
-  summarise(rate = mean(lmratemgkgmin, na.rm = TRUE,
-                        ),
+  summarize(rate = mean(lmratemgkgmin, na.rm = TRUE,),
             sd = sd(lmratemgkgmin, na.rm = T),
-            .groups = "drop") %>%
-  mutate(rate = round(rate, 3),
-         .groups = "drop")
+            .groups = "keep") %>%
+  mutate(rate = round(rate, 3))
   
 
 
@@ -35,10 +49,13 @@ ggplot(plot_data, aes(x = temp, y = rate, color = Species)) +
     color = "Fish"
   ) +
   xlim(10, 25) +
-  theme_classic() + 
-  facet_wrap(FishID)
+  theme_classic()
+             
 
-#################### rsq > 0.95
+
+
+             
+################## rsq > 0.95
 plot_data <-  raw_df%>%
   filter(rsq >0.95) %>%
   group_by(temp, Species) %>%
@@ -185,7 +202,7 @@ avg_norsqfilter <- raw_df %>%
   
 
 ########## plot with rsq below 90 in red
-  ggplot(avg_rate_raw, aes(x = temp, y = rate)) +
+  ggplot(avg_rate_raw, aes(x = replicate, y = rate)) +
     geom_point(size = 2) +
     geom_point(data = avg_norsqfilter, aes(x = temp, y = rate),
                color = 'red', alpha = 0.3) +
