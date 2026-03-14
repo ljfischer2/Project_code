@@ -306,3 +306,5 @@ Ito_rm <- rbind(Ito1_rm,Ito2_rm,Ito3_rm,Ito4_rm,Ito5_rm,Ito7_rm,
 
 raw_df <- anti_join(raw_df, Masu_rm, by = c('FishID', 'rep'))
 raw_df <- anti_join(raw_df, Ito_rm, by = c('FishID', 'rep'))
+
+

@@ -1,7 +1,7 @@
 ######## Combining  & CleaningData #######
 
-Trial_All <- c(Trial_1, Trial_2, Trial_3, Trial_4)
-
+#Trial_All <- c(Trial_1, Trial_2, Trial_3, Trial_4)
+Trial_All <- c(Trial_1, Trial_2, Trial_3)
 #Trial_All[["Masu1"]][["raw"]]
 
 FishID_string <- Fishlist%>% # remove non-used and bad fish
@@ -20,18 +20,7 @@ raw_df <- bind_rows(raw_list)
 
 raw_df <- raw_df %>%
   filter(!FishID %in% c('Ito6', 'Ito11', 'Ito13','Masu4', 
-                        'Masu11', 'Masu12', 'Masu13',
-                        'Blank'))
-
-
-Blank_df <- raw_df %>%      # Getting blank data
-  filter(FishID %in% c('Blank'))
-
-
-
-bad_rep_list <- vector('list',18)
-names(bad_rep_list) <- FishID_str
-FishID_str
+                        'Masu11', 'Masu12', 'Masu13', 'Blank'))
 
 
 Masu1_rm <- data.frame(FishID = 'Masu1',
@@ -81,3 +70,117 @@ Ito_rm <- rbind(Ito1_rm,Ito2_rm,Ito3_rm,Ito4_rm,Ito5_rm,Ito7_rm,
 
 raw_df <- anti_join(raw_df, Masu_rm, by = c('FishID', 'rep'))
 raw_df <- anti_join(raw_df, Ito_rm, by = c('FishID', 'rep'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##
+
+Blank_df <- raw_df %>%      # Getting blank data
+  filter(FishID %in% c('Blank'))
+
+
+
+bad_rep_list <- vector('list',18)
+names(bad_rep_list) <- FishID_str
+FishID_str
+
+
+
+
+############# Background ################
+########### Background Rate checking
+ggplot(Blank_df, aes(x = rep, y = lmratemgkgmin)) + 
+  geom_point()
+
+ggplot(Blank_df, aes(x = rep, y = temp)) + 
+  geom_point()
+
+
+################# Subtracting background from trials
+
+# corrected is (oxy solu(ratew/ * volw/ - ratew/o * vol w/o)) / fish mass
+
+trial4Ito_df <- raw_df %>%
+  filter(trial == 4) %>%
+  filter(Species == 'Ito')
+
+trial4Masu_df <- raw_df %>%
+  filter(trial == 4) %>%
+  filter(Species == 'Masu')
+
+
+CRrate <- Blank_df[(Blank_df$rep %in% trial4Masu_df$rep),] # filters only the reps same as Masu
+
+for (i in 1:length(trial4Masu_df$rsq)){
+  trial4Masu_df$bkgcorrect[i] <- trial4Masu_df$lmrate[i] - CRrate$lmrate[i]
+  rate <- trial4Masu_df$bkgcorrect[i]
+  rate <- trial4Masu_df$bkgcorrect[i]
+  rate <- rate * 60 #mg per L per min
+  rate <- rate * (350/1000) #remove vol, mg per min
+  rate <- rate / 4.2 #mg per g per min
+  rate <- rate *1000 #mg per kg per min
+  trial4Masu_df$bkgcorrect_mgkgmin[i] <- abs(rate)
+}
+
+CRrate <- Blank_df[(Blank_df$rep %in% trial4Ito_df$rep),] # filters only the reps same as Masu
+
+for (i in 1:length(trial4Ito_df$rsq)){
+  trial4Ito_df$bkgcorrect[i] <- trial4Ito_df$lmrate[i] - CRrate$lmrate[i]
+  rate <- trial4Ito_df$bkgcorrect[i]
+  rate <- rate * 60 #mg per L per min
+  rate <- rate * (350/1000) #remove vol, mg per min
+  rate <- rate / 4.2 #mg per g per min
+  rate <- rate *1000 #mg per kg per min
+  trial4Ito_df$bkgcorrect_mgkgmin[i] <- abs(rate)
+}
+
+
+
+
+
+
+CRrate_sum <- CRrate%>%
+  group_by(temp, Species) %>%
+  summarize(rate = mean(lmrate, na.rm = TRUE,),
+            sd = sd(lmrate, na.rm = T),
+            ratemgkgmin = mean(lmratemgkgmin, na.rm = T),
+            .groups = "keep")
+
+
+trial4Masu_df_sum <- trial4Masu_df%>%
+  group_by(temp, Species) %>%
+  summarize(rate = mean(lmrate, na.rm = TRUE,),
+            sd = sd(lmrate, na.rm = T),
+            ratemgkgmin = mean(lmratemgkgmin, na.rm = T),
+            .groups = "keep")
+
+
+for (i in 1:length(trial4Masu_df_sum)){
+  trial4Masu_df_sum$bkgcorrect[i] <- trial4Masu_df_sum$rate[i] - CRrate_sum$rate[i]
+rate <- trial4Masu_df_sum$bkgcorrect[i]
+rate <- rate * 60 #mg per L per min
+rate <- rate * (350/1000) #remove vol, mg per min
+rate <- rate / 4.2 #mg per g per min
+rate <- rate *1000 #mg per kg per min
+trial4Masu_df_sum$bkgcorrect_mgkgmin[i] <- abs(rate)
+}
+
+ggplot(trial4Masu_df, aes(x = temp, y = lmratemgkgmin)) + 
+  geom_point(size = 3) + 
+  geom_point(size = 3, aes(x = temp, y = bkgcorrect_mgkgmin), color = 'red') +
+  theme_minimal()
