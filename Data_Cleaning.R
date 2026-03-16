@@ -73,6 +73,38 @@ raw_df <- anti_join(raw_df, Ito_rm, by = c('FishID', 'rep'))
 
 
 
+######## Prepping Columns
+
+data_2023 <- read.csv('Resp_23_data.csv')
+
+head(data_2023)
+head(raw_df)
+
+raw_df <- raw_df %>% #10 of them colander bois
+  select(FishID, Species, temp, lmrate, lmratemgkgmin, rep, trial, rsq, sd, deltatemp)
+
+data_2023 <- data_2023 %>%   # 9 ariablse
+  select(FishID, Species, temp_bin, rate_output, rate_final, rep, trial, Method, temp)
+
+colnames(data_2023) <- c('FishID', 'Species', 'temp_bin', 'rate', 'rate_final',
+                         'rep', 'trial', 'Method', 'temp_exact')
+
+colnames(raw_df) <- c('FishID', 'Species', 'temp_bin', 'rate', 'rate_final',
+                      'rep', 'trial', 'rsq', 'sd', 'deltatemp')
+
+########## Actual Join (Only run if you intend to join, as you will lose)
+
+#;(
+raw_df_join <- raw_df %>%
+  select(FishID, Species, temp_bin, rate, rate_final, rep, trial)
+raw_df_join$Method <- 'Intermittent'
+
+data_2023_join <- data_2023 %>%
+  select(FishID, Species, temp_bin, rate, rate_final, rep, trial, Method)
+
+two_year_data <- rbind(raw_df_join, data_2023_join)
+
+
 
 
 

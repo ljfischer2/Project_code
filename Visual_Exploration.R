@@ -596,3 +596,32 @@ ggplot(model_data, aes(x = temp, y = lmratemgkgmin)) +
   facet_wrap(~FishID) +
   theme_minimal()
   
+
+
+
+########################################### Two Year Data ######################
+plot_data <-  two_year_data%>%
+  group_by(temp_bin, Species) %>%
+  summarize(rate = mean(rate_final, na.rm = TRUE,),
+            sd = sd(rate_final, na.rm = T),
+            .groups = "keep") %>%
+  mutate(rate = round(rate, 3))
+
+
+
+ggplot(plot_data, aes(x = temp_bin, y = rate, color = Method)) + 
+  geom_point(size = 3) + 
+  facet_wrap(~Species) + 
+  theme_minimal() +
+  labs(title = 'Combined Year Data, Wrapped by Species') +
+  geom_smooth(, method = 'lm')
+
+ggplot(plot_data, aes(x = temp_bin, y = rate, color = Species)) + 
+  geom_point(size = 3, position = pos) + 
+  geom_errorbar(aes(ymin = rate - sd,
+                    ymax = rate + sd),
+                position = pos) +
+  theme_minimal() +
+  labs(title = 'Combined Year, Error Bars') 
+#  geom_smooth(, method = 'lm')
+  
