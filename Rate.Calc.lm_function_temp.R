@@ -24,12 +24,16 @@ Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
     rate <- lm_rate_df$lmrate[[i]]
     rate <- rate * 60 #mg per L per min
     rate <- rate * (vol/1000) #remove vol, mg per min
-    rate <- rate / mass #mg per g per min
+    lm_rate_df$mass_corrected[i] <- abs(rate) #needs to be corrected for units
+    lm_rate_df$mass_corrected[i] <- lm_rate_df$mass_corrected[i] * 1.44
+    rate <- rate / mass #mg per g per min 
     rate <- rate *1000 #mg per kg per min
     lm_rate_df$lmratemgkgmin[i] <- abs(rate)
     lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
     lm_rate_df$sd[i] <- sigma(lmtest[[i]])
     lm_rate_df$rep[i] <- i
+    lm_rate_df$mass[i] <- mass
+    lm_rate_df$vol[i] <- vol
   }
   
   
