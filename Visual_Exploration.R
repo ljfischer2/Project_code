@@ -5,21 +5,13 @@ pos <- position_dodge(width = 0.5)
 
 
 
-########### Background Rate checking ############
-ggplot(Blank_df, aes(x = rep, y = lmratemgkgmin)) + 
-  geom_point()
-
-ggplot(Blank_df, aes(x = rep, y = temp)) + 
-  geom_point()
-
-
-
 
 ############# Rates over time ##########
 
-ggplot(raw_df, aes(x = rep, y = lmratemgkgmin)) + 
+ggplot(raw_df, aes(x = rep, y = lmratemgkgmin, color = temp)) + 
   geom_point(size = 2) + 
-  facet_wrap(~FishID)
+  facet_wrap(~FishID) + 
+  theme_minimal()
   
 
 
@@ -43,7 +35,7 @@ ggplot(plot_data, aes(x = temp, y = rate, color = Species)) +
                     ymax = rate + sd),
                 position = pos) +
   labs(
-    title = "rsq = 0.90",
+    title = "Trials 1-4",
     x = "Temperature (°C)",
     y = expression("Oxygen consumption (mg O"[2]*" kg"^{-1}*" min"^{-1}*")"),
     color = "Fish"
@@ -603,4 +595,33 @@ ggplot(model_data, aes(x = temp, y = lmratemgkgmin)) +
        y = expression("Mean Oxygen consumption (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) +
   facet_wrap(~FishID) +
   theme_minimal()
+  
+
+
+
+########################################### Two Year Data ######################
+plot_data <-  two_year_data%>%
+  group_by(temp_bin, Species) %>%
+  summarize(rate = mean(rate_final, na.rm = TRUE,),
+            sd = sd(rate_final, na.rm = T),
+            .groups = "keep") %>%
+  mutate(rate = round(rate, 3))
+
+
+
+ggplot(plot_data, aes(x = temp_bin, y = rate, color = Method)) + 
+  geom_point(size = 3) + 
+  facet_wrap(~Species) + 
+  theme_minimal() +
+  labs(title = 'Combined Year Data, Wrapped by Species') +
+  geom_smooth(, method = 'lm')
+
+ggplot(plot_data, aes(x = temp_bin, y = rate, color = Species)) + 
+  geom_point(size = 3, position = pos) + 
+  geom_errorbar(aes(ymin = rate - sd,
+                    ymax = rate + sd),
+                position = pos) +
+  theme_minimal() +
+  labs(title = 'Combined Year, Error Bars') 
+#  geom_smooth(, method = 'lm')
   

@@ -1,0 +1,8 @@
+"","Model","Marginal R²","Conditional R²","df","AIC","ΔAIC"
+"1","lograte ~ temp_bin + Method, random =  ~1 | FishID",0.094,0.526,5,-53.258,0
+"2","lograte ~ temp_bin, random =  ~1 | FishID",0.096,0.591,4,-52.334,0.924
+"3","lograte ~ temp_bin + mass, random =  ~1 | FishID",0.13,0.6,5,-43.459,9.799
+"4","lograte ~ temp_bin + Method + mass, random =  ~1 | FishID",0.09,0.54,6,-42.955,10.303
+"5","lograte ~ Method, random =  ~1 | FishID",0.006,0.511,4,20.999,74.257
+"6","lograte ~ mass, random =  ~1 | FishID",0.005,0.518,4,27.401,80.659
+"7","lograte ~ mass + Method, random =  ~1 | FishID",0.006,0.529,5,31.039,84.297

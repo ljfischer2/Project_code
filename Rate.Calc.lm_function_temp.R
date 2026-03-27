@@ -1,4 +1,4 @@
-Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
+Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
   
   
   
@@ -23,13 +23,17 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
     
     rate <- lm_rate_df$lmrate[[i]]
     rate <- rate * 60 #mg per L per min
-    rate <- rate * (fishlist$vol/1000) #remove vol, mg per min
-    rate <- rate / fishlist$mass #mg per g per min
+    rate <- rate * (vol/1000) #remove vol, mg per min
+    lm_rate_df$mass_corrected[i] <- abs(rate) #needs to be corrected for units
+    lm_rate_df$mass_corrected[i] <- lm_rate_df$mass_corrected[i] * 1.44
+    rate <- rate / mass #mg per g per min 
     rate <- rate *1000 #mg per kg per min
     lm_rate_df$lmratemgkgmin[i] <- abs(rate)
     lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
     lm_rate_df$sd[i] <- sigma(lmtest[[i]])
     lm_rate_df$rep[i] <- i
+    lm_rate_df$mass[i] <- mass
+    lm_rate_df$vol[i] <- vol
   }
   
   
@@ -41,11 +45,15 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
     Rep_TempA <- data$Temp[
       seq(from = 390, by = 450, length.out = num_sets)
     ]
+    Rep_TempA_end <- data$Temp[
+      seq(from = 450, by = 450, length.out = num_sets)
+    ]
     
     n <- min(nrow(lm_rate_df), length(Rep_TempA))
     
     lm_rate_df <- lm_rate_df[seq_len(n), ]
     lm_rate_df$temp <- round(Rep_TempA[seq_len(n)])
+    lm_rate_df$deltatemp <- abs(Rep_TempA - Rep_TempA_end)
     
     
     avg_rate <- lm_rate_df %>%
@@ -60,11 +68,15 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
       Rep_TempA <- data$TempA[
         seq(from = 390, by = 450, length.out = num_sets)
       ]
+      Rep_TempA_end <- data$TempA[
+        seq(from = 450, by = 450, length.out = num_sets)
+      ]
       
       n <- min(nrow(lm_rate_df), length(Rep_TempA))
       
       lm_rate_df <- lm_rate_df[seq_len(n), ]
       lm_rate_df$temp <- round(Rep_TempA[seq_len(n)])
+      lm_rate_df$deltatemp <- abs(Rep_TempA - Rep_TempA_end)
       
       
       avg_rate <- lm_rate_df %>%
@@ -78,11 +90,15 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
       Rep_TempB <- data$TempB[
         seq(from = 390, by = 450, length.out = num_sets)
       ]
+      Rep_TempB_end <- data$TempB[
+        seq(from = 450, by = 450, length.out = num_sets)
+      ]
       
       n <- min(nrow(lm_rate_df), length(Rep_TempB))
       
       lm_rate_df <- lm_rate_df[seq_len(n), ]
       lm_rate_df$temp <- round(Rep_TempB[seq_len(n)])
+      lm_rate_df$deltatemp <- abs(Rep_TempB - Rep_TempB_end)
       
       
       avg_rate <- lm_rate_df %>%
@@ -96,4 +112,3 @@ Rate.calc.lm <- function(fishlist, FishID, Chnum, numfish, data) {
   }
   
 }
-

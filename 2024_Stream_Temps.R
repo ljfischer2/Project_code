@@ -1,25 +1,29 @@
-<<<<<<< HEAD
+
 library(ggplot2)
-library(dplyr)
+library(tidyverse)
 
-setwd("C:/Users/heref/Documents/Project stuff/LucasProject/projectrepo/Stream Temps")
-
+setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 
 ################################################################################
 #Higurezawa
 ################################################################################
-
-
 hig <- read.csv("Higurezawa.csv")
 
-hig$Time <- as.POSIXct(hig$Time, format = "%m/%d/%Y %H:%M:%S")
-hig$date <- as.Date(hig$Time)
-hig$timeint <- as.POSIXlt(hig$Time)
-hig$timeint <- format(hig$time, "%H:%M:%S")
 
-hig_daily_avg <- hig %>%
-  group_by(date) %>%
-  summarise(avg_temperature = mean(Temperature, na.rm = TRUE))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ggplot(hig_daily_avg, aes(x = date, y = avg_temperature)) +
   geom_line() +
@@ -68,12 +72,31 @@ ggplot(OOM_daily_avg, aes(x = date, y = avg_temperature)) +
 
 ################################################################################
 #OOM
-=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 library(ggplot2)
 library(dplyr)
 
-setwd("C:/Users/heref/Documents/Project stuff/LucasProject/projectrepo/Stream Temps")
-
+setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 
 ################################################################################
 #Higurezawa
