@@ -150,7 +150,7 @@ require(gridExtra)
 
 
 ##### Ito
-summary(Itomodel2) #RA is 0.79, RQ is 0.0434, no RB
+summary(Itomodel2) #RA is 0.70, RQ is 0.0466, no RB
 ItoRA <- Itomodel2[["coefficients"]][["fixed"]][[1]] #Value is from linear log model
 ItoRQ <- Itomodel2[["coefficients"]][["fixed"]][[2]] #Value is from linear log model
 
@@ -176,13 +176,14 @@ plot_data_stat <- two_year_data_Ito %>%
   
 plot1 <- ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
   geom_point(data = plot_data_int, aes(shape = "Intermittent"),
-             size = 1 , alpha = 0.4) +
+             shape = 1, size = 1 , alpha = 0.4) +
   geom_point(data = plot_data_stat, aes(shape = "Static"),
-             size  = 1, alpha = 0.4) +
+             shape = 2, size  = 1, alpha = 0.4) +
   geom_line(data = line_vals, aes(x = x, y = y),
             color = "blue", linewidth = 1.2) + 
   xlim(5,25) + 
   ylim(0,12) +
+  theme_minimal()
   labs(title = "Ito raw data with Model 2",
        shape = "Data Type") + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
@@ -205,16 +206,18 @@ plot_data_stat <- two_year_data_Ito %>%
             sd = sd(rate_final, na.rm = T))
 
 plot3 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
-  geom_point(data = plot_data_int, aes(shape = "Intermittent"), size = 3) +
-  geom_point(data = plot_data_stat, aes(shape = "Static"), size  = 2) +
+  geom_point(data = plot_data_int, aes(shape = "Intermittent"),
+             shape = 1, size = 3) +
+  geom_point(data = plot_data_stat, aes(shape = "Static"),
+             shape = 2, size  = 2) +
   geom_line(data = line_vals, aes(x = x, y = y),
             color = "blue", linewidth = 1.2) + 
   xlim(5,25) + 
   ylim(0,12) +
-  labs(title = "Ito summarized data with Model 2",
-       shape = "Data Type") + 
+  theme_minimal() +
+  labs(shape = "Data Type") + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
-
+plot3
 ####### Masu
 
 
@@ -251,8 +254,8 @@ plot2 <- ggplot(two_year_data_Masu, aes(x = temp_bin, y = rate_final)) +
             color = "blue", linewidth = 1.2) + 
   xlim(5,25) + 
   ylim(0,12) +
-  labs(title = "Masu raw data with Model 2",
-       shape = "Data Type") + 
+  theme_minimal() + 
+  labs(shape = "Data Type") + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 plot2
 
@@ -277,16 +280,32 @@ plot4 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
             color = "blue", linewidth = 1.2) + 
   xlim(5,25) + 
   ylim(0,12) +
-  labs(title = "Masu summarized data with Model 2",
-       shape = "Data Type") + 
+  theme_minimal() + 
+  labs(shape = "Data Type") + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 
 
 
 ######## Model Grouping (Odds are Ito, Evens are Masu)
 
-grid.arrange(plot1, plot2, ncol=2)
-grid.arrange(plot3, plot4, ncol=1)
+
+library(patchwork)
+plot1 + plot2 + plot_layout(ncol = 2, guides = "collect") +
+  plot_annotation(tag_levels = "A")
+plot3 + plot4 + plot_layout(ncol = 2, guides = "collect") + 
+  plot_annotation(tag_levels = "A")
+
+
+ggplot(data_2023, aes(x = temp_bin, y = rate_final)) + 
+  geom_point() + 
+  facet_wrap(~FishID) + 
+  geom_smooth(method = 'lm')
+
+
+
+
+
+
 
 
 

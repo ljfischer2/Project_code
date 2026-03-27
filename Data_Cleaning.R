@@ -106,7 +106,8 @@ raw_df_join$Method <- 'Intermittent'
 
 data_2023_join <- data_2023 %>%
   select(FishID, Species, temp_bin, rate, rate_final,
-         rep, mass, vol, trial, Method)
+         rep, mass, vol, trial, Method) %>%
+  filter(!FishID %in% 'Ito15')
 
 two_year_data <- rbind(raw_df_join, data_2023_join)
 two_year_data$lograte <- log(two_year_data$rate_final)
@@ -123,6 +124,11 @@ ggplot(plot_data, aes(x = temp_bin, y = lograte, color = Species)) +
   xlim(10,25) + 
   ylim(0, 2) +
   labs(title = 'Log Rate Int Only')
+
+
+
+
+
 
 
 
