@@ -24,11 +24,22 @@ Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
     rate <- lm_rate_df$lmrate[[i]]
     rate <- rate * 60 #mg per L per min
     rate <- rate * (vol/1000) #remove vol, mg per min
-    lm_rate_df$mass_corrected[i] <- abs(rate) #needs to be corrected for units
-    lm_rate_df$mass_corrected[i] <- lm_rate_df$mass_corrected[i] * 1.44
+#    lm_rate_df$mass_corrected[i] <- abs(rate) #needs to be corrected for units
+#    lm_rate_df$mass_corrected[i] <- lm_rate_df$mass_corrected[i] * 1.44
     rate <- rate / mass #mg per g per min 
     rate <- rate *1000 #mg per kg per min
     lm_rate_df$lmratemgkgmin[i] <- abs(rate)
+    
+    rate <- lm_rate_df$lmrate[[i]]
+    rate <- rate * 60 #mg per L per min
+    rate <- rate * (vol/1000) #remove vol, mg per min
+    rate <- rate / mass #mg per g per min 
+    rate <- rate /1000 #g per g per min
+    rate <- rate * 1440 #g per g per day
+    lm_rate_df$lmrateggd[i] <- abs(rate)
+    
+    
+    
     lm_rate_df$rsq[i] <- summary(lmtest[[i]])$r.squared
     lm_rate_df$sd[i] <- sigma(lmtest[[i]])
     lm_rate_df$rep[i] <- i
@@ -62,7 +73,13 @@ Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
       mutate(rate = round(rate, 3)) %>%
       ungroup()
     
-    return(list(raw = lm_rate_df, avg = avg_rate))
+    avg_rateggd <- lm_rate_df %>%
+      group_by(temp) %>%
+      summarise(rate = mean(lmrateggd, na.rm = TRUE)) %>%
+      mutate(rate = round(rate, 3)) %>%
+      ungroup()
+    
+    return(list(raw = lm_rate_df, avg = avg_rate, avg_ggd = avg_rateggd))
   } else if (numfish > 4){
     if (any(fishlist$FSID %in% c(1:4))){
       Rep_TempA <- data$TempA[
@@ -85,7 +102,13 @@ Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
         mutate(rate = round(rate, 3)) %>%
         ungroup()
       
-      return(list(raw = lm_rate_df, avg = avg_rate))
+      avg_rateggd <- lm_rate_df %>%
+        group_by(temp) %>%
+        summarise(rate = mean(lmrateggd, na.rm = TRUE)) %>%
+        mutate(rate = round(rate, 3)) %>%
+        ungroup()
+      
+      return(list(raw = lm_rate_df, avg = avg_rate, avg_ggd = avg_rateggd))
     } else if (any(fishlist$FSID %in% c(5:8))){
       Rep_TempB <- data$TempB[
         seq(from = 390, by = 450, length.out = num_sets)
@@ -107,7 +130,13 @@ Rate.calc.lm <- function(vol, mass, fishlist, FishID, Chnum, numfish, data) {
         mutate(rate = round(rate, 3)) %>%
         ungroup()
       
-      return(list(raw = lm_rate_df, avg = avg_rate))
+      avg_rateggd <- lm_rate_df %>%
+        group_by(temp) %>%
+        summarise(rate = mean(lmrateggd, na.rm = TRUE)) %>%
+        mutate(rate = round(rate, 3)) %>%
+        ungroup()
+      
+      return(list(raw = lm_rate_df, avg = avg_rate, avg_ggd = avg_rateggd))
     } else {}
   }
   

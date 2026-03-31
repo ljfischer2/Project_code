@@ -15,20 +15,24 @@ raw_list <- list()
 for (i in 1:length(Trial_All)){
   raw_list[[i]] <- Trial_All[[i]][['raw']]
 }
+
+
+
+
 raw_df <- bind_rows(raw_list)
 
 
 raw_df <- raw_df %>%
-  filter(!FishID %in% c('Ito6', 'Ito11', 'Ito13','Masu4', 
-                        'Masu11', 'Masu12', 'Masu13', 'Blank'))
+  filter(!FishID %in% c('Ito6', 'Ito11', 'Ito13', 'Ito4', 'Masu4', 
+                        'Masu3', 'Masu11', 'Masu12', 'Masu13', 'Blank'))
 
 
 Masu1_rm <- data.frame(FishID = 'Masu1',
                        rep = c(12:14, 16,21,41,50:52,58))
 Masu2_rm <- data.frame(FishID = 'Masu2',
                        rep = c(13, 57:63,95))
-Masu3_rm <- data.frame(FishID = 'Masu3',
-                       rep = c(1,13,2,3,4,44:47,5,55:75,95))
+#Masu3_rm <- data.frame(FishID = 'Masu3',
+#                       rep = c(1,13,2,3,4,44:47,5,55:75,95))
 Masu5_rm <- data.frame(FishID = 'Masu5',
                        rep = c(45))
 Masu6_rm <- data.frame(FishID = 'Masu6',
@@ -45,9 +49,9 @@ Ito2_rm <- data.frame(FishID = 'Ito2',
                       rep = c(NaN))
 Ito3_rm <- data.frame(FishID = 'Ito3',
                       rep = c(34,51))
-Ito4_rm <- data.frame(FishID = 'Ito4',
-                      rep = c(1,13,14,2,25,3,44,45,47,49,5,55,57,58:64,
-                              66,67,68,71,74,75,76:78,94,95))
+#Ito4_rm <- data.frame(FishID = 'Ito4',
+#                      rep = c(1,13,14,2,25,3,44,45,47,49,5,55,57,58:64,
+#                              66,67,68,71,74,75,76:78,94,95))
 Ito5_rm <- data.frame(FishID = 'Ito5',
                       rep = c(13,57,58,62,66,76,77,95))
 Ito7_rm <- data.frame(FishID = 'Ito7',
@@ -72,9 +76,6 @@ raw_df <- anti_join(raw_df, Masu_rm, by = c('FishID', 'rep'))
 raw_df <- anti_join(raw_df, Ito_rm, by = c('FishID', 'rep'))
 
 
-
-
-
 ######## Prepping Columns
 
 data_2023 <- read.csv('Resp_23_data.csv')
@@ -83,34 +84,46 @@ head(data_2023)
 head(raw_df)
 
 raw_df <- raw_df %>% #10 of them colander bois
-  select(FishID, Species, temp, lmrate, lmratemgkgmin, rep, trial, mass, vol,
+  select(FishID, Species, temp,
+         lmrate, lmratemgkgmin, lmrateggd,
+         rep, trial, mass, vol,
          rsq, sd, deltatemp)
+
+colnames(raw_df) <- c('FishID', 'Species', 'temp_bin',
+                      'rate', 'rate_final', 'rate_ggd',
+                      'rep', 'trial', 'mass', 'vol',
+                      'rsq', 'sd', 'deltatemp')
+
 
 data_2023 <- data_2023 %>%   # 9 ariablse
   select(FishID, Species, temp_bin, rate_output, rate_final, rep,
          trial, Method, mass, vol, temp)
 
-colnames(data_2023) <- c('FishID', 'Species', 'temp_bin', 'rate', 'rate_final',
+colnames(data_2023) <- c('FishID', 'Species', 'temp_bin', 'rate_ggd', 'rate_final',
                          'rep', 'trial', 'Method', 'mass', 'vol', 'temp_exact')
 
-colnames(raw_df) <- c('FishID', 'Species', 'temp_bin', 'rate', 'rate_final',
-                      'rep', 'trial', 'mass', 'vol', 'rsq', 'sd', 'deltatemp')
+
 
 ########## Actual Join (Only run if you intend to join, as you will lose some variables)
 
 #;(
 raw_df_join <- raw_df %>%
-  select(FishID, Species, temp_bin, rate, rate_final,
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
          rep, mass, vol, trial)
 raw_df_join$Method <- 'Intermittent'
 
 data_2023_join <- data_2023 %>%
-  select(FishID, Species, temp_bin, rate, rate_final,
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
          rep, mass, vol, trial, Method) %>%
   filter(!FishID %in% 'Ito15')
 
 two_year_data <- rbind(raw_df_join, data_2023_join)
+#two_year_data$rate <- abs(two_year_data$rate)
 two_year_data$lograte <- log(two_year_data$rate_final)
+two_year_data$lograte_ggd <- log(two_year_data$rate_ggd)
+
+
+
 
 # Plotting the log transformed data
 plot_data <- two_year_data %>%
@@ -124,6 +137,102 @@ ggplot(plot_data, aes(x = temp_bin, y = lograte, color = Species)) +
   xlim(10,25) + 
   ylim(0, 2) +
   labs(title = 'Log Rate Int Only')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################ Taking lowest quartile only ################
+
+
+# Every other line is the same as above, just filtered to lowest quartile
+
+temp_counts <- raw_df %>% 
+  group_by(FishID, temp) %>%
+  count()
+
+raw_df <- raw_df %>% 
+  group_by(FishID, temp) %>%
+  filter(lmratemgkgmin <= quantile(lmratemgkgmin, 0.25, na.rm = TRUE))
+
+
+
+######## Prepping Columns
+
+data_2023 <- read.csv('Resp_23_data.csv')
+
+#head(data_2023)
+#head(raw_df)
+
+raw_df <- raw_df %>% #10 of them colander bois
+  select(FishID, Species, temp,
+         lmrate, lmratemgkgmin, lmrateggd,
+         rep, trial, mass, vol,
+         rsq, sd, deltatemp)
+
+colnames(raw_df) <- c('FishID', 'Species', 'temp_bin',
+                      'rate', 'rate_final', 'rate_ggd',
+                      'rep', 'trial', 'mass', 'vol',
+                      'rsq', 'sd', 'deltatemp')
+
+
+data_2023 <- data_2023 %>%   # 9 ariablse
+  select(FishID, Species, temp_bin, rate_output, rate_final, rep,
+         trial, Method, mass, vol, temp)
+
+colnames(data_2023) <- c('FishID', 'Species', 'temp_bin', 'rate_ggd', 'rate_final',
+                         'rep', 'trial', 'Method', 'mass', 'vol', 'temp_exact')
+
+
+
+########## Actual Join (Only run if you intend to join, as you will lose some variables)
+
+#;(
+raw_df_join <- raw_df %>%
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
+         rep, mass, vol, trial)
+raw_df_join$Method <- 'Intermittent'
+
+data_2023_join <- data_2023 %>%
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
+         rep, mass, vol, trial, Method) %>%
+  filter(!FishID %in% 'Ito15')
+
+two_year_data <- rbind(raw_df_join, data_2023_join)
+#two_year_data$rate <- abs(two_year_data$rate)
+two_year_data$lograte <- log(two_year_data$rate_final)
+two_year_data$lograte_ggd <- log(two_year_data$rate_ggd)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

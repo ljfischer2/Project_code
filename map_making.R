@@ -2,6 +2,7 @@ library(sf)
 library(maps)
 library(sp)
 library(tidyverse)
+library(patchwork)
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Japan GIS Files/CGISJapan")
 
 
@@ -10,7 +11,7 @@ sf_path <- "流域界_watershed/北海道/流域界01北海道.shp"
 Hoshed <- st_read(sf_path)
 names(Hoshed)
 
-plot(Hoshed)
+#plot(Hoshed)
 
 sarshed <- Hoshed %>%    #selecting only Sarufutsu watershed
   filter(水系域名 == '猿払川水系')　%>%
@@ -19,7 +20,7 @@ sarshed <- Hoshed %>%    #selecting only Sarufutsu watershed
 
 sarshed_sp <- as(sarshed, "Spatial")
 # Now use spplot
-spplot(sarshed_sp) #Sarufutsu watershed?
+#spplot(sarshed_sp) #Sarufutsu watershed?
 
 # full coastline of Hokkaido
 coast <- '海岸線coastline/北海道/海岸線01北海道.shp'
@@ -27,9 +28,9 @@ coast <- st_read(coast)
 names(coast)
 
 
-hocoast_sarshed <- st_intersects(coast, sarshed)
-hocoast_sarshed_sp <- as(hocoast_sarshed, 'Spatial')
-plot(hocoast_sarshed_sp)
+#hocoast_sarshed <- st_intersects(coast, sarshed)
+#hocoast_sarshed_sp <- as(hocoast_sarshed, 'Spatial')
+#plot(hocoast_sarshed_sp)
 
 #plot(st_geometry(coast), col = "black", axes = T,  #map that is not in use
 #     xlim = c(140, 146))   # longitude range
@@ -56,10 +57,23 @@ point_path <- read.csv('C:/Users/heref/Documents/Project stuff/LucasProject/Repo
 point_path <- point_path[-c(2),]
 point_sf <- st_as_sf(point_path, coords = c("lon", "lat"), crs = 4326)
 
+
+
+par(mfrow = c(1, 2))
+
+
+
+x_ticks <- seq(139, 146, by = 2)          #making axis labels
+y_ticks <- seq(41, 46, by = 2)
+x_labels <- paste0(abs(x_ticks), "°E")
+y_labels <- paste0(y_ticks, "°N")
+
 plot(st_geometry(coast),   # map in use (All of Hokkaido)
      col = "black",
-     axes = TRUE,
+     axes = FALSE,
      asp = 1)
+axis(1, at = x_ticks,  labels = x_labels)
+axis(2, at = y_ticks, labels = y_labels)
 plot(st_geometry(sarshed), col = "black", border = NA, add = TRUE)
 
 
@@ -75,13 +89,13 @@ x_labels <- paste0(abs(x_ticks), "°E")
 y_labels <- paste0(y_ticks, "°N")
 
 
-plot(st_geometry(sarshed), col = "grey", border = NA, axes = FALSE, asp = 1)  #final sarufutsu map?
+plot(st_geometry(sarshed), col = "lightgrey", border = NA, axes = FALSE, asp = 1)  #final sarufutsu map?
 axis(1, at = x_ticks,  labels = x_labels)
 axis(2, at = y_ticks, labels = y_labels)
 box()
 plot(st_geometry(sarriver), add = TRUE)
 plot(st_geometry(coast), add = TRUE)
-plot(st_geometry(point_sf), add = TRUE, pch = 16, col = "red", cex = 1.25)
+plot(st_geometry(point_sf), add = TRUE, pch = 16, col = "black", cex = 1.25)
 
 
 

@@ -1,11 +1,16 @@
-<<<<<<< HEAD
-library(dplyr)
-library(ggplot2)
 
+library(dplyr)
+library(tidyverse)
+#install.packages("ggpattern")
+library(ggpattern)
 
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject")
 ctm_data <- read.csv("CTM_data_analysis.csv")
-?t.test
+fish_colors <- c(Ito = 'darkgrey', Masu = 'white')
+
+
+
+
 Masu_ctm <- ctm_data$Temp_LOE[ctm_data$Species == "Masu"]
 Ito_ctm <- ctm_data$Temp_LOE[ctm_data$Species == "Ito"]
 t.test(Masu_ctm, Ito_ctm)
@@ -23,7 +28,6 @@ ctmnochar <- subset(ctm_data, ctm_data$Species == "Masu" |
 
 
 
-?boxplot
 boxplot(ctmnochar$Temp_LOE ~ ctmnochar$Species)
 ggplot(data = ctm_data) + 
   geom_point(mapping = aes(x = Trial, y = Temp_LOE,
@@ -61,7 +65,10 @@ ggplot(ctmnochar, aes(x=Species, y=Temp_LOE, fill = Species)) +
   #xlab("Species") + ylab("Temperature(Celsius)") +
   #title('Critical Thermal Maxima')
 
-=======
+#####################################################################
+
+
+
 library(dplyr)
 library(ggplot2)
 
@@ -86,16 +93,33 @@ ggplot(data = ctm_data) +
                            color = Species, size = 2))
   
 # A really basic boxplot.
+
 ggplot(ctmnochar, aes(x=Species, y=Temp_LOE, fill = Species)) + 
-  geom_boxplot() + 
-  labs(title = 'Critical Thermal Maxima',
-       x = 'Species',
-       y = 'Temperature(Celsius)') +
-  scale_fill_brewer(palette = 'Dark2')
-  
+  geom_boxplot(linewidth = 1) + 
+  labs(x = 'Species',
+       y = 'Temperature(°C)') +
+#  scale_fill_brewer(palette = 'Dark2') + 
+  theme_minimal() + 
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)
+  ) + 
+  scale_fill_manual(values = fish_colors)
+
+
   xlab("Species") + ylab("Temperature(Celsius)") +
     title('Critical Thermal Maxima') +
               
 ?plot
 ?geom_point
->>>>>>> 4ab97b844f7b4f7c69d7f3d9be8f4017901363c7
+
+
+  
+  geom_boxplot_pattern(
+    fill = 'white',
+    color = 'black',
+    pattern_fill = 'black',
+    pattern_density = 0.1,
+    pattern_spacing = 0.05
+  ) 

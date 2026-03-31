@@ -3,6 +3,7 @@ library(nlme)
 library(lmtest)
 library(ggfortify)
 library(performance)
+require(gridExtra)
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 ############
 head(raw_df)   # checks to make sure that the data is present
@@ -10,13 +11,18 @@ head(two_year_data)
 
 two_year_data_Ito <- two_year_data %>%
   filter(Species == 'Ito')
-write.csv(two_year_data_Ito, "Ito_only_data.csv")
+
+two_year_data_Ito_int <- two_year_data_Ito %>%
+  filter(Method == 'Intermittent')
+#write.csv(two_year_data_Ito, "Ito_only_data.csv")
+
 
 two_year_data_Masu <- two_year_data %>%
   filter(Species == 'Masu')
+
+two_year_data_Masu_int <- two_year_data_Masu %>%
+  filter(Method == 'Intermittent')
 #write.csv(two_year_data_Masu, "Masu_only_data.csv")
-
-
 
 ######### Ito Models ############
 
@@ -81,7 +87,7 @@ Itomodel_params <- Itomodel_params %>%
 colnames(Itomodel_params) <- c('Model', 'Marginal R²', 'Conditional R²',
                               'df', 'AIC', '\u0394AIC')
 
-#write.csv(Itomodel_params, file = 'Ito_Model.csv')
+#write.csv(Itomodel_params, file = 'low_quart_Ito_Model.csv')
 
 
 
@@ -145,7 +151,7 @@ Mamodel_params <- Mamodel_params %>%
 colnames(Mamodel_params) <- c('Model', 'Marginal R²', 'Conditional R²',
                               'df', 'AIC', '\u0394AIC')
 
-#write.csv(Mamodel_params, file = 'Masu_Model.csv')
+#write.csv(Mamodel_params, file = 'low_quart_Masu_Model.csv')
 
 ########### Prediction Visualizing #######
 
@@ -158,16 +164,17 @@ ItoRA <- Itomodel2[["coefficients"]][["fixed"]][[1]] #Value is from linear log m
 ItoRQ <- Itomodel2[["coefficients"]][["fixed"]][[2]] #Value is from linear log model
 
 
-x_vals <- seq(5, 25, by = 0.5)
+x_vals_ito <- seq(5, 25, by = 0.5)
 
-newdata <- data.frame(temp_bin = x_vals)
+newdata_ito <- data.frame(temp_bin = x_vals)
 
-pred_vals <- predict(Itomodel2, newdata = newdata, level = 0)
+pred_vals_ito <- predict(Itomodel2, newdata = newdata_ito, level = 0)
 
-line_vals <- data.frame(
-  x = x_vals,
-  y = exp(pred_vals)
+line_vals_ito <- data.frame(
+  x = x_vals_ito,
+  y = exp(pred_vals_ito)
 )
+
 
 #Raw Data Plot
 plot_data_int <- two_year_data_Ito %>%
@@ -182,7 +189,7 @@ plot1 <- ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
              shape = 1, size = 1 , alpha = 0.4) +
   geom_point(data = plot_data_stat, aes(shape = "Static"),
              shape = 2, size  = 1, alpha = 0.4) +
-  geom_line(data = line_vals, aes(x = x, y = y),
+  geom_line(data = line_vals_ito, aes(x = x, y = y),
             color = "blue", linewidth = 1.2) + 
   xlim(5,25) + 
   ylim(0,12) +
@@ -213,12 +220,18 @@ plot3 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
              shape = 1, size = 3) +
   geom_point(data = plot_data_stat, aes(shape = "Static"),
              shape = 2, size  = 2) +
-  geom_line(data = line_vals, aes(x = x, y = y),
-            color = "blue", linewidth = 1.2) + 
+  geom_line(data = line_vals_ito, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
   xlim(5,25) + 
   ylim(0,12) +
   theme_minimal() +
-  labs(shape = "Data Type") + 
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)) +
+  labs(shape = "Data Type",
+       x = 'Temperature (°C)',
+       y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 plot3
 ####### Masu
@@ -229,15 +242,15 @@ MaRA <- Mamodel2[["coefficients"]][["fixed"]][[1]] #Value is from linear log mod
 MaRQ <- Mamodel2[["coefficients"]][["fixed"]][[2]] #Value is from linear log model
 
 
-x_vals <- seq(5, 25, by = 0.5)
+x_vals_masu <- seq(5, 25, by = 0.5)
 
-newdata <- data.frame(temp_bin = x_vals)
+newdata_masu <- data.frame(temp_bin = x_vals)
 
-pred_vals <- predict(Mamodel2, newdata = newdata, level = 0)
+pred_vals_masu <- predict(Mamodel2, newdata = newdata_masu, level = 0)
 
-line_vals <- data.frame(
-  x = x_vals,
-  y = exp(pred_vals)
+line_vals_masu <- data.frame(
+  x = x_vals_masu,
+  y = exp(pred_vals_masu)
 )
 
 #Raw Data Plot
@@ -253,8 +266,8 @@ plot2 <- ggplot(two_year_data_Masu, aes(x = temp_bin, y = rate_final)) +
              size = 1 , alpha = 0.4) +
   geom_point(data = plot_data_stat, aes(shape = "Static"),
              size  = 1, alpha = 0.4) +
-  geom_line(data = line_vals, aes(x = x, y = y),
-            color = "blue", linewidth = 1.2) + 
+  geom_line(data = line_vals_masu, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
   xlim(5,25) + 
   ylim(0,12) +
   theme_minimal() + 
@@ -279,12 +292,18 @@ plot_data_stat <- two_year_data_Masu %>%
 plot4 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
   geom_point(data = plot_data_int, aes(shape = "Intermittent"), size = 3) +
   geom_point(data = plot_data_stat, aes(shape = "Static"), size  = 2) +
-  geom_line(data = line_vals, aes(x = x, y = y),
-            color = "blue", linewidth = 1.2) + 
+  geom_line(data = line_vals_masu, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
   xlim(5,25) + 
   ylim(0,12) +
   theme_minimal() + 
-  labs(shape = "Data Type") + 
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)) +
+  labs(shape = "Data Type",
+       x = 'Temperature (°C)',
+       y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 
 
@@ -299,14 +318,14 @@ plot3 + plot4 + plot_layout(ncol = 2, guides = "collect") +
   plot_annotation(tag_levels = "A")
 
 
-ggplot(data_2023, aes(x = temp_bin, y = rate_final)) + 
-  geom_point() + 
-  facet_wrap(~FishID) + 
-  geom_smooth(method = 'lm')
 
 
 
 
+
+
+
+####################### Intermittent only ################
 
 
 

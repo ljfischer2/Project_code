@@ -11,7 +11,7 @@ library(lubridate)  # for date handling
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Stream Temps")
 
 
-
+#### Locations and descriptions of temp sites
 locations <- read.csv('eDNA_temp_sites.csv')
 locations$Description.EN
 
@@ -89,22 +89,27 @@ ggplot(OOM_avg, aes(x = date, y = avg_temp)) +
 #####################Karibetsu Weir#############################################
 Karw <- read.csv("KarWeir_2023.csv", header = T)
 Karw$date <- as.Date(Karw$Time, format = '%m/%d/%y')
+Karw$juldate <- as.integer(format(Karw$date, "%j"))
 Karw$Temperature <- as.numeric(Karw$Temperature)
 
 Karw_avg <- Karw %>%
-  group_by(date) %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2))
 
 
 
-ggplot(Karw_avg, aes(x = date, y = avg_temp)) +
-  geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "Karibetsu Average Daily Temperature",
-       x = "Date",
+ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
+  geom_line(aes(color = '2023')) +
+  geom_line(aes(y = fut_avg_temp, color = 'Future'), linetype = 'dashed') +
+  labs(#title = "Karibetsu Average Daily Temperature",
+       x = "Julian Day",
        y = "Temperature (°C)") + 
-  theme_minimal()
+  theme_minimal() + 
+  theme(
+    legend.position = c(0.8, 0.2),
+    legend.title = element_blank()) +
+  scale_color_manual(values = c("2023" = "black", "Future" = "black"))
 
 ################Mokeuni River ###############
 mor <- read.csv("MOR_2023-2024.csv", header = T)
