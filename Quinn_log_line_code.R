@@ -50,3 +50,11 @@ ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
   geom_point(alpha = 0.4) +
   geom_line(data = line_vals, aes(x = x, y = y),
             color = "blue", linewidth = 1.2)
+
+
+
+
+
+
+
+tri1_rates <- raw_df$rate_final[raw_df$trial == '1']

@@ -27,44 +27,39 @@ two_year_data_Masu_int <- two_year_data_Masu %>%
 ######### Ito Models ############
 
 
-Itomodel1 <- lme(lograte ~ Method, random =  ~1 | FishID,
-                 data = two_year_data_Ito)
-Itomodel2 <- lme(lograte ~ temp_bin, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
-Itomodel3 <- lme(lograte ~ mass, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
-Itomodel4 <- lme(lograte ~ temp_bin + Method, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
-Itomodel5 <- lme(lograte ~ mass + Method, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
-Itomodel6 <- lme(lograte ~ temp_bin + mass, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
-Itomodel7 <- lme(lograte ~ temp_bin + Method + mass, random =  ~1 | FishID,
-                  data = two_year_data_Ito)
 
-AIC(Itomodel1, Itomodel2, Itomodel3, Itomodel4,
-    Itomodel5, Itomodel6, Itomodel7)
-
-lrtest(Itomodel1, Itomodel2, Itomodel3, Itomodel4,
-       Itomodel5, Itomodel6, Itomodel7)
+intItomodel1 <- lme(lograte ~ temp_bin, random =  ~1 | FishID,
+                 data = two_year_data_Ito_int)
+intItomodel2 <- lme(lograte ~ mass, random =  ~1 | FishID,
+                 data = two_year_data_Ito_int)
+intItomodel3 <- lme(lograte ~ temp_bin + mass, random =  ~1 | FishID,
+                 data = two_year_data_Ito_int)
+intItomodel4 <- lme(lograte ~ temp_bin + mass + day, random =  ~1 | FishID,
+                    data = two_year_data_Ito_int)
 
 
-Itomodel_list <- mget(c('Itomodel1', 'Itomodel2', 'Itomodel3', 'Itomodel4',
-                     'Itomodel5', 'Itomodel6', 'Itomodel7'))
-Itomodel_list_str <- c('Itomodel1', 'Itomodel2', 'Itomodel3', 'Itomodel4',
-                     'Itomodel5', 'Itomodel6', 'Itomodel7')
-Itomodel_var_list <- c('lograte ~ Method, random =  ~1 | FishID',
-                      'lograte ~ temp_bin, random =  ~1 | FishID',
-                      'lograte ~ mass, random =  ~1 | FishID',
-                      'lograte ~ temp_bin + Method, random =  ~1 | FishID',
-                      'lograte ~ mass + Method, random =  ~1 | FishID',
-                      'lograte ~ temp_bin + mass, random =  ~1 | FishID',
-                      'lograte ~ temp_bin + Method + mass, random =  ~1 | FishID')
 
-Itomodel_params <- data.frame(model_name = Itomodel_var_list)
-                              
+AIC(intItomodel1, intItomodel2,
+    intItomodel3, intItomodel4)
 
-ItoAIC_vector <- vapply(Itomodel_list, AIC, numeric(1))
+#lrtest(Itomodel1, Itomodel2, Itomodel3, Itomodel4,
+#       Itomodel5, Itomodel6, Itomodel7)
+
+
+intItomodel_list <- mget(c('intItomodel1', 'intItomodel2',
+                        'intItomodel3', 'intItomodel4'))
+intItomodel_list_str <- c('intItomodel1', 'intItomodel2',
+                       'intItomodel3', 'intItomodel4')
+
+intItomodel_var_list <- c('lograte ~ temp_bin, random =  ~1 | FishID',
+                       'lograte ~ mass, random =  ~1 | FishID',
+                       'lograte ~ temp_bin + mass, random =  ~1 | FishID',
+                       'lograte ~ temp_bin + mass + day, random =  ~1 | FishID')
+
+intItomodel_params <- data.frame(model_name = Itomodel_var_list)
+
+
+intItoAIC_vector <- vapply(Itomodel_list, AIC, numeric(1))
 
 for (i in 1:length(Itomodel_list)){
   r2_val <- r2_nakagawa(Itomodel_list[[i]])
@@ -85,7 +80,7 @@ Itomodel_params <- Itomodel_params %>%
 
 
 colnames(Itomodel_params) <- c('Model', 'Marginal R²', 'Conditional R²',
-                              'df', 'AIC', '\u0394AIC')
+                               'df', 'AIC', '\u0394AIC')
 
 #write.csv(Itomodel_params, file = 'low_quart_Ito_Model.csv')
 
@@ -93,31 +88,26 @@ colnames(Itomodel_params) <- c('Model', 'Marginal R²', 'Conditional R²',
 
 ############# Masu Models ##############
 
-Mamodel1 <- lme(log(rate_final) ~ Method, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel2 <- lme(log(rate_final) ~ temp_bin, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel3 <- lme(log(rate_final) ~ mass, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel4 <- lme(log(rate_final) ~ temp_bin + Method, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel5 <- lme(log(rate_final) ~ mass + Method, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel6 <- lme(log(rate_final) ~ temp_bin + mass, random =  ~1 | FishID,
-                data = two_year_data_Masu)
-Mamodel7 <- lme(log(rate_final) ~ temp_bin + Method + mass, random =  ~1 | FishID,
-                data = two_year_data_Masu)
 
-AIC(Mamodel1, Mamodel2, Mamodel3, Mamodel4, Mamodel5, Mamodel6, Mamodel7)
+intMamodel1 <- lme(log(rate_ggd) ~ temp_bin, random =  ~1 | FishID,
+                data = two_year_data_Masu_int)
+intMamodel2 <- lme(log(rate_ggd) ~ mass, random =  ~1 | FishID,
+                data = two_year_data_Masu_int)
+intMamodel3 <- lme(log(rate_ggd) ~ temp_bin + mass, random =  ~1 | FishID,
+                data = two_year_data_Masu_int)
+intMamodel4 <- lme(log(rate_ggd) ~ temp_bin + mass + day, random =  ~1 | FishID,
+                data = two_year_data_Masu_int)
 
-lrtest(Mamodel1, Mamodel2, Mamodel3, Mamodel4, Mamodel5, Mamodel6, Mamodel7)
+AIC(intMamodel1, intMamodel2, intMamodel3, intMamodel4)
+
+#lrtest(Mamodel1, Mamodel2, Mamodel3, Mamodel4)
 
 
 
 Mamodel_list <- mget(c('Mamodel1', 'Mamodel2', 'Mamodel3', 'Mamodel4',
-                        'Mamodel5', 'Mamodel6', 'Mamodel7'))
+                       'Mamodel5', 'Mamodel6', 'Mamodel7'))
 Mamodel_list_str <- c('Mamodel1', 'Mamodel2', 'Mamodel3', 'Mamodel4',
-                       'Mamodel5', 'Mamodel6', 'Mamodel7')
+                      'Mamodel5', 'Mamodel6', 'Mamodel7')
 Mamodel_var_list <- c('lograte ~ Method, random =  ~1 | FishID',
                       'lograte ~ temp_bin, random =  ~1 | FishID',
                       'lograte ~ mass, random =  ~1 | FishID',
@@ -183,7 +173,7 @@ plot_data_int <- two_year_data_Ito %>%
 
 plot_data_stat <- two_year_data_Ito %>%
   filter(Method == 'Static') 
-  
+
 plot1 <- ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
   geom_point(data = plot_data_int, aes(shape = "Intermittent"),
              shape = 1, size = 1 , alpha = 0.4) +
@@ -194,8 +184,8 @@ plot1 <- ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
   xlim(5,25) + 
   ylim(0,12) +
   theme_minimal()
-  labs(title = "Ito raw data with Model 2",
-       shape = "Data Type") + 
+labs(title = "Ito raw data with Model 2",
+     shape = "Data Type") + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 plot1
 
@@ -204,22 +194,22 @@ plot1
 ### Summarized by temp
 plot_data_int <- two_year_data_Ito %>%
   filter(Method == 'Intermittent') %>%
-  group_by(FishID, temp_bin) %>%
+  group_by(temp_bin) %>%
   summarize(rate = mean(rate_final, na.rm = T),
             sd = sd(rate_final, na.rm = T))
 
 
 plot_data_stat <- two_year_data_Ito %>%
   filter(Method == 'Static') %>%
-  group_by(FishID, temp_bin) %>%
+  group_by(temp_bin) %>%
   summarize(rate = mean(rate_final, na.rm = T),
             sd = sd(rate_final, na.rm = T))
 
 plot3 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
-  geom_point(data = plot_data_int, aes(shape = "Intermittent",color = FishID),
-             size = 3) +
-  geom_point(data = plot_data_stat, aes(shape = "Static", color = FishID),
-             size  = 2) +
+  geom_point(data = plot_data_int, aes(shape = "Intermittent"),
+             shape = 1, size = 3) +
+  geom_point(data = plot_data_stat, aes(shape = "Static"),
+             shape = 2, size  = 2) +
   geom_line(data = line_vals_ito, aes(x = x, y = y),
             color = "black", linewidth = 0.8, linetype = 'dashed') + 
   xlim(5,25) + 
@@ -232,21 +222,21 @@ plot3 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
   labs(shape = "Data Type",
        x = 'Temperature (°C)',
        y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
-  scale_shape_manual(values = c("Intermittent" = 16, "Static" = 17))
+  scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
 plot3
 ####### Masu
 
 
-summary(Mamodel2) #RA is -0.312, RQ is 0.095, no RB
-MaRA <- Mamodel2[["coefficients"]][["fixed"]][[1]] #Value is from linear log model
-MaRQ <- Mamodel2[["coefficients"]][["fixed"]][[2]] #Value is from linear log model
+summary(Mamodel1) #RA is -0.312, RQ is 0.095, no RB
+MaRA <- intMamodel1[["coefficients"]][["fixed"]][[1]] #Value is from linear log model
+MaRQ <- intMamodel1[["coefficients"]][["fixed"]][[2]] #Value is from linear log model
 
 
 x_vals_masu <- seq(5, 25, by = 0.5)
 
 newdata_masu <- data.frame(temp_bin = x_vals)
 
-pred_vals_masu <- predict(Mamodel2, newdata = newdata_masu, level = 0)
+pred_vals_masu <- predict(intMamodel1, newdata = newdata_masu, level = 0)
 
 line_vals_masu <- data.frame(
   x = x_vals_masu,
@@ -263,9 +253,9 @@ plot_data_stat <- two_year_data_Masu %>%
 
 plot2 <- ggplot(two_year_data_Masu, aes(x = temp_bin, y = rate_final)) +
   geom_point(data = plot_data_int, aes(shape = "Intermittent"),
-             size = 1.5 , alpha = 0.5) +
+             size = 1 , alpha = 0.4) +
   geom_point(data = plot_data_stat, aes(shape = "Static"),
-             size  = 1.5, alpha = 0.5) +
+             size  = 1, alpha = 0.4) +
   geom_line(data = line_vals_masu, aes(x = x, y = y),
             color = "black", linewidth = 0.8, linetype = 'dashed') + 
   xlim(5,25) + 
@@ -278,24 +268,16 @@ plot2
 ### Summarized by temp
 plot_data_int <- two_year_data_Masu %>%
   filter(Method == 'Intermittent') %>%
-  group_by(FishID, temp_bin) %>%
-  summarize(rate = mean(rate_final, na.rm = T),
-            sd = sd(rate_final, na.rm = T))
-
-
-plot_data_stat <- two_year_data_Masu %>%
-  filter(Method == 'Static') %>%
-  group_by(FishID, temp_bin) %>%
-  summarize(rate = mean(rate_final, na.rm = T),
-            sd = sd(rate_final, na.rm = T))
+  group_by(temp_bin) %>%
+  summarize(rate = mean(rate_ggd, na.rm = T),
+            sd = sd(rate_ggd, na.rm = T))
 
 plot4 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
-  geom_point(data = plot_data_int, aes(shape = "Intermittent", color = FishID), size = 3) +
-  geom_point(data = plot_data_stat, aes(shape = "Static", color = FishID), size  = 2) +
+  geom_point(data = plot_data_int, aes(shape = "Intermittent"), size = 3) +
   geom_line(data = line_vals_masu, aes(x = x, y = y),
             color = "black", linewidth = 0.8, linetype = 'dashed') + 
-  xlim(5,25) + 
-  ylim(0,12) +
+#  xlim(5,25) + 
+#  ylim(0,12) +
   theme_minimal() + 
   theme(
     axis.title.x = element_text(size = 12),
@@ -304,8 +286,9 @@ plot4 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
   labs(shape = "Data Type",
        x = 'Temperature (°C)',
        y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
-  scale_shape_manual(values = c("Intermittent" = 16, "Static" = 17))
+  scale_shape_manual(values = c("Intermittent" = 1))
 plot4
+
 
 ######## Model Grouping (Odds are Ito, Evens are Masu)
 
@@ -315,89 +298,3 @@ plot1 + plot2 + plot_layout(ncol = 2, guides = "collect") +
   plot_annotation(tag_levels = "A")
 plot3 + plot4 + plot_layout(ncol = 2, guides = "collect") + 
   plot_annotation(tag_levels = "A")
-
-
-
-
-
-
-
-
-
-####################### Intermittent only ################
-
-plot <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
-  geom_point(data = plot_data_int, aes(shape = "Intermittent", color = FishID), size = 3) +
-#  geom_point(data = plot_data_stat, aes(shape = "Static", color = FishID), size  = 2) +
-  geom_line(data = line_vals_masu, aes(x = x, y = y),
-            color = "black", linewidth = 0.8, linetype = 'dashed') + 
-  xlim(5,25) + 
-  ylim(0,12) +
-  theme_minimal() + 
-  theme(
-    axis.title.x = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    axis.title.y = element_text(size = 12)) +
-  labs(shape = "Data Type",
-       x = 'Temperature (°C)',
-       y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
-  scale_shape_manual(values = c("Intermittent" = 16))
-plot
-
-
-
-
-###############Plotting with additional species metrics ###########
-
-
-
-
-
-
-
-
-
-#### Extra modelling code
-
-####Q Stuff####
-#Basically the same, but using predict to make workflow easier
-#With the back transformation, just know it is biased low unless you correct for variance (generally ok)
-
-library(nlme)
-
-Itomodel2 <- lme(log(rate_final) ~ temp_bin,
-                 random = ~1 | FishID,
-                 data = two_year_data_Ito)
-
-x_vals <- seq(5, 25, by = 0.5)
-
-newdata <- data.frame(temp_bin = x_vals)
-
-pred_vals <- predict(Itomodel2, newdata = newdata, level = 0)
-
-line_vals <- data.frame(
-  x = x_vals,
-  y = exp(pred_vals)
-)
-
-ggplot(two_year_data_Ito, aes(x = temp_bin, y = rate_final)) +
-  geom_point(alpha = 0.4) +
-  geom_line(data = line_vals, aes(x = x, y = y),
-            color = "blue", linewidth = 1.2)
-
-
-
-
-
-#George's code using ggpredict which log transforms automatically for you
-library(nlme)
-library(ggplot2)
-library(ggeffects)
-
-m1 <- lme(log(rate_final) ~ temp_bin, random =  ~1 | FishID,
-          data = Ito_data) 
-
-plot(ggpredict(m1, terms = "temp_bin [5:25]"), show_data = T) # ggpredict back-transforms automatically if you use log() directly in the formula
-
-###
-

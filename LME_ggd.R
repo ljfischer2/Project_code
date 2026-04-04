@@ -313,7 +313,7 @@ plot4 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
        x = 'Temperature (°C)',
        y = expression("Metabolic Rate (g O"[2]*" g"^{-1}*" day"^{-1}*")")) + 
   scale_shape_manual(values = c("Intermittent" = 1, "Static" = 2))
-
+plot4
 
 
 ######## Model Grouping (Odds are Ito, Evens are Masu)
@@ -328,5 +328,101 @@ plot3 + plot4 + plot_layout(ncol = 2, guides = "collect") +
 
 
 
+
+
+
+
+
+
+
+
+
+################ Modelling w/ other species ############
+setwd('C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/FB4-master')
+fishbio_data <- read.csv('Parameters_official.csv')
+
+
+x_tempvals_sim <- seq(5, 25, by = 0.5)
+x_weightvals_sim <- rnorm(41, mean = 200, sd = 75)
+
+newdata_sim <- data.frame(temp_bin = x_tempvals_sim,
+                           mass = abs(x_weightvals_sim))
+
+newdata_sim$rate <-  (fishbio_data$RA[21]) * (newdata_sim$mass^fishbio_data$RB[21]) * #Chinook Salmon
+  exp(fishbio_data$RQ[21] * newdata_sim$temp_bin)
+  
+
+  
+
+
+
+
+
+#### With Ito
+
+plot_data_int <- two_year_data_Ito %>%
+  filter(Method == 'Intermittent') %>%
+  group_by(temp_bin, FishID) %>%
+  summarize(rate = mean(rate_ggd, na.rm = T),
+            sd = sd(rate_ggd, na.rm = T))
+
+
+plot_data_stat <- two_year_data_Ito %>%
+  filter(Method == 'Static') %>%
+  group_by(temp_bin, FishID) %>%
+  summarize(rate = mean(rate_ggd, na.rm = T),
+            sd = sd(rate_ggd, na.rm = T))
+
+plot <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
+  geom_point(data = plot_data_int, aes(shape = "Ito", color = FishID),
+             size = 3) +
+  geom_point(data = plot_data_stat, aes(shape = "Ito", color = FishID),
+             shape = 2, size  = 2) +
+  geom_point(data = newdata_sim, aes(y = rate, shape = "Chinook"),
+             size = 2) +
+  geom_line(data = line_vals_ito, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
+  xlim(5,25) + 
+  ylim(0,0.012) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)) +
+  labs(shape = "Data Type",
+       x = 'Temperature (°C)',
+       y = expression("Metabolic Rate (g O"[2]*" g"^{-1}*" day"^{-1}*")")) + 
+  scale_shape_manual(values = c("Ito" = 1, "Chinook" = 2))
+plot
+  
+  
+######### Masu
+
+
+plot_data_int <- two_year_data_Masu %>%
+  filter(Method == 'Intermittent') %>%
+  group_by(temp_bin, FishID) %>%
+  summarize(rate = mean(rate_ggd, na.rm = T),
+            sd = sd(rate_ggd, na.rm = T))
+
+plot <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
+  geom_point(data = plot_data_int, aes(shape = "Masu", color = FishID),
+             size = 3) +
+  geom_point(data = newdata_sim, aes(y = rate, shape = "Chinook"),
+             size = 2) +
+  geom_line(data = line_vals_masu, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
+  xlim(5,25) + 
+  ylim(0,0.012) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)) +
+  labs(shape = "Data Type",
+       x = 'Temperature (°C)',
+       y = expression("Metabolic Rate (g O"[2]*" g"^{-1}*" day"^{-1}*")")) + 
+  scale_shape_manual(values = c("Masu" = 1, "Chinook" = 2))
+plot
 
 
