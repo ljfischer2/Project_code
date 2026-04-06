@@ -1,3 +1,8 @@
+library(tidyverse)
+#install.packages("ggpattern")
+library(ggpattern)
+setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
+
 
 #Start from lowest quartile section
 
@@ -85,47 +90,69 @@ raw_df <- anti_join(raw_df, Ito_rm, by = c('FishID', 'rep'))
 
 
 ######## Prepping Columns
-
 data_2023 <- read.csv('Resp_23_data.csv')
 
 head(data_2023)
-head(raw_df)
-
-raw_df <- raw_df %>% #10 of them colander bois
-  select(FishID, Species, temp,
-         lmrate, lmratemgkgmin, lmrateggd,
-         rep, trial, mass, vol,
-         rsq, sd, deltatemp)
-
-colnames(raw_df) <- c('FishID', 'Species', 'temp_bin',
-                      'rate', 'rate_final', 'rate_ggd',
-                      'rep', 'trial', 'mass', 'vol',
-                      'rsq', 'sd', 'deltatemp')
-
 
 data_2023 <- data_2023 %>%   # 9 ariablse
   select(FishID, Species, temp_bin, rate_output, rate_final, rep,
-         trial, Method, mass, vol, temp)
+         trial, Method, mass, vol, temp) %>%
+  filter(!FishID %in% 'Ito15')
 
 colnames(data_2023) <- c('FishID', 'Species', 'temp_bin', 'rate_ggd', 'rate_final',
                          'rep', 'trial', 'Method', 'mass', 'vol', 'temp_exact')
 
 
+fishlist_2023 <- data_2023 %>%
+  select(FishID, mass, vol) %>%
+  group_by(FishID, mass, vol) %>%
+  mutate(FishID = FishID,
+         Mass = mass,
+         Volume = vol) %>%
+  count(FishID, name = 'Replicates') 
+
+#write.csv(fishlist_2023, 'fishlist_2023.csv')
+
+
+
+fishlist_2024 <- Fishlist %>%
+  filter(!FishID %in% 'Blank') %>%
+  select(FishID, mass, vol, Trial) %>%
+  group_by(FishID, mass, vol, Trial) %>%
+  mutate(FishID = FishID,
+         Mass = mass,
+         Volume = vol,
+         Trial = Trial)
+#write.csv(fishlist_2024, 'fishlist_2024.csv')
 
 ########## Actual Join (Only run if you intend to join, as you will lose some variables)
 
 #;(
-raw_df_join <- raw_df %>%
+final_df <- read.csv('final_df.csv')
+final_df_join <- final_df %>%
   select(FishID, Species, temp_bin, rate_ggd, rate_final,
          rep, mass, vol, trial)
-raw_df_join$Method <- 'Intermittent'
+final_df_join$Method <- 'Intermittent'
 
 data_2023_join <- data_2023 %>%
   select(FishID, Species, temp_bin, rate_ggd, rate_final,
          rep, mass, vol, trial, Method) %>%
   filter(!FishID %in% 'Ito15')
 
-two_year_data <- rbind(raw_df_join, data_2023_join)
+two_year_data <- rbind(final_df_join, data_2023_join)
+
+
+
+two_year_data_table <- two_year_data %>%
+  select(FishID, Species,mass, vol, Method) %>%
+  group_by(FishID, Species, mass, vol, Method) %>%
+  mutate(FishID = FishID,
+            Species = Species,
+            Mass = mass,
+            Volume = vol,
+            Method = Method)
+#write.csv(two_year_data_table, 'two_year_data_table.csv')
+
 #two_year_data$rate <- abs(two_year_data$rate)
 two_year_data$lograte <- log(two_year_data$rate_final)
 two_year_data$lograte_ggd <- log(two_year_data$rate_ggd)
@@ -244,7 +271,7 @@ raw_df_lowquar <- raw_df %>%
   filter(rate_final <= quantile(rate_final, 0.25, na.rm = TRUE))
 
 
-write.csv(raw_df, 'raw_df.csv')
+#write.csv(raw_df, 'raw_df.csv')
 
 
 temp_counts <- raw_df_lowquar_rm %>% 
@@ -312,7 +339,7 @@ final_df$day[final_df$trial == 3 & final_df$rep >= 19] <- 2
 
 
 final_df <- read.csv('final_df.csv')
-
+  
 final_df$no_mass_rate <- final_df$rate_final * (final_df$mass/1000) *60 # mg per hour
 
 final_df$mass_corrected <- (final_df$no_mass_rate) / ((final_df$mass)^0.89) # mg/g/hr
