@@ -1,6 +1,7 @@
 library(tidyverse)
 #install.packages("ggpattern")
 library(ggpattern)
+library(patchwork)
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 
 
@@ -335,70 +336,82 @@ final_df$day[final_df$trial == 3 & final_df$rep >= 19] <- 2
 
 #write.csv(final_df, 'final_df.csv')
 
-################# plotting MO2 over mass, and correctiong ##########
+################# mass correction for body size ##########
 
 
 final_df <- read.csv('final_df.csv')
   
-final_df$no_mass_rate <- final_df$rate_final * (final_df$mass/1000) *60 # mg per hour
-
-final_df$mass_corrected <- (final_df$no_mass_rate) / ((final_df$mass)^0.89) # mg/g/hr
-final_df$mass_corrected <- final_df$mass_corrected * (1000/60) #mg/kg/min
 
 
-plot1 <- ggplot(final_df, aes(x = temp_bin, y = mass_corrected)) + 
+
+final_df$no_mass_rate <- final_df$rate_final *60 # mg per kg per hour
+final_df$mass_corrected <- final_df$no_mass_rate * (((final_df$mass/1000)/0.15)^(1-0.89)) #corrected for body mass
+final_df$mass_corrected <- final_df$mass_corrected / 60
+
+
+plot1 <- ggplot(final_df, aes(x = temp_bin, y = rate_final)) + 
   geom_point() +
   ylim(0,10)
 plot1
 
-plot2 <- ggplot(final_df, aes(x = temp_bin, y = rate_final)) + 
+plot2 <- ggplot(final_df, aes(x = temp_bin, y = mass_corrected)) + 
   geom_point() +
   ylim(0,10)
 plot2
 plot1 + plot2
 
-plot3 <- ggplot(final_df, aes(x = temp_bin, y = exp(mass_corrected))) + 
-  geom_point()
-plot3
-
-################# background sensitivity testing#########
-
-final_df_bg <- final_df
-final_df_bg$bgrate <- final_df_bg$mass_corrected
-
-final_df_bg$bgrate[final_df_bg$trial == 2 & final_df_bg$bath == 1] <- 
-  final_df_bg$mass_corrected[final_df_bg$trial == 2 & final_df_bg$bath == 1] * 0.90
-
-final_df_bg$bgrate[final_df_bg$trial == 3 & final_df_bg$bath == 1] <- 
-  final_df_bg$mass_corrected[final_df_bg$trial == 3 & final_df_bg$bath == 1] * 0.70
-
-final_df_bg$bgrate[final_df_bg$trial ==3  & final_df_bg$bath == 2] <- 
-  final_df_bg$mass_corrected[final_df_bg$trial == 3 & final_df_bg$bath == 2] * 0.90
 
 
-final_df_bg_order <- final_df_bg %>%
-  group_by(trial, bath, FishID) %>%
-  summarize(rate = mean(mass_corrected))
+
+############ Adding cumulative time for intermittent ############
+
+final_df$time <- 0
+final_df$time[final_df$trial == 1] <- (0 + (final_df$rep[final_df$trial == 1] * 30))
 
 
-pos <- position_dodge(width = 0.5)
-bgplot2 <- ggplot(final_df_bg, aes(x = trial, y = bgrate, color = Species)) + 
-  geom_point(position = pos, alpha = 0.5) + 
-  ylim(0,10)
+final_df$time[final_df$trial == 2 & final_df$bath == 1] <- 3075 + (final_df$rep[final_df$trial == 2 & final_df$bath == 1] * 30)
 
-bgplot1 <- ggplot(final_df_bg, aes(x = trial, y = mass_corrected, color = Species)) + 
-  geom_point(position = pos, alpha = 0.5) + 
-  ylim(0,10)
-
-bgplot1 + bgplot2
-
-final_df_bg$trial <- as.factor(final_df_bg$trial)
-model <- aov(mass_corrected ~ trial, data = final_df_bg)
-summary(model)
-TukeyHSD(model)
+final_df$time[final_df$trial == 2 & final_df$bath == 2] <- 0 + (final_df$rep[final_df$trial == 2 & final_df$bath == 2] * 30)
 
 
-final_df <- final_df_bg
+final_df$time[final_df$trial == 3 & final_df$bath == 1] <- 7150 + (final_df$rep[final_df$trial == 3 & final_df$bath == 1] * 30)
+
+final_df$time[final_df$trial == 3 & final_df$bath == 2] <- 4075 + (final_df$rep[final_df$trial == 3 & final_df$bath == 2] * 30)
+
+final_df_2 <- final_df %>%
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
+         rep, trial, bath, mass_corrected, time)
+
+write.csv(final_df_2, 'Clean_final_df.csv')
+
+
+
+########## Mass correction for static ##########
+
+data_2023 <- read.csv('Resp_23_data.csv')
+
+data_2023$no_mass_rate <- 0
+data_2023$mass_corrected <- 0
+
+data_2023$no_mass_rate <- data_2023$rate_final * 60 # mg per kg per hour
+data_2023$mass_corrected <- data_2023$no_mass_rate * (((data_2023$mass/1000)/0.15)^(1-0.89)) #corrected for body mass
+data_2023$mass_corrected <- data_2023$mass_corrected / 60 #back to mg/kg/min
+
+data_2023_clean <- data_2023 %>%
+  filter(!FishID %in% 'Ito15') %>%
+  select(FishID, Species, temp_bin, rate_ggd, rate_final,
+                mass_corrected, trial)
+
+
+#write.csv(data_2023_clean, 'data_2023_clean.csv')
+
+
+temp_counts <- data_2023_clean %>% 
+  group_by(Species, temp_bin) %>%
+  count()
+
+
+
 
 
 

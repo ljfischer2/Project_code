@@ -32,7 +32,7 @@ hig_avg <- hig %>%
 
 
 
-ggplot(hig_avg, aes(x = date, y = avg_temp)) +
+hig_plot <- ggplot(hig_avg, aes(x = date, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
   labs(title = "Higurezawa Average Daily Temperature",
@@ -53,7 +53,7 @@ KarUS_avg <- KarUS %>%
 
 
 
-ggplot(KarUS_avg, aes(x = date, y = avg_temp)) +
+KarUS_plot <- ggplot(KarUS_avg, aes(x = date, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
   labs(title = "Karibetsu Average Daily Temperature",
@@ -76,7 +76,7 @@ OOM_avg <- OOM %>%
 
 
 
-ggplot(OOM_avg, aes(x = date, y = avg_temp)) +
+OOM_plot <- ggplot(OOM_avg, aes(x = date, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
   labs(title = "OOM Average Daily Temperature",
@@ -99,7 +99,7 @@ Karw_avg <- Karw %>%
 
 
 
-ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
+KarW_plot <- ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
   geom_line(aes(color = '2023')) +
   geom_line(aes(y = fut_avg_temp, color = 'Future'), linetype = 'dashed') +
   labs(#title = "Karibetsu Average Daily Temperature",
@@ -123,7 +123,7 @@ mor_avg <- mor %>%
 
 
 
-ggplot(mor_avg, aes(x = date, y = avg_temp)) +
+mor_plot <- ggplot(mor_avg, aes(x = date, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
   labs(title = "Mokeuni Average Daily Temperature",
@@ -133,6 +133,27 @@ ggplot(mor_avg, aes(x = date, y = avg_temp)) +
 
 
 
+################ Furukawa Bridge #########
+
+
+mor <- read.csv("MOR_2023-2024.csv", header = T)
+mor$date <- as.Date(mor$Time, format = '%m/%d/%y')
+mor$Temperature <- as.numeric(mor$Temperature)
+
+mor_avg <- mor %>%
+  group_by(date) %>%
+  summarize(avg_temp = mean(Temperature),
+            fut_avg_temp = (mean(Temperature) + 1.5))
+
+
+
+mor_plot <- ggplot(mor_avg, aes(x = date, y = avg_temp)) +
+  geom_line() +
+  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
+  labs(title = "Mokeuni Average Daily Temperature",
+       x = "Date",
+       y = "Temperature (°C)") + 
+  theme_minimal()
 
 
 
