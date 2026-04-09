@@ -3,7 +3,7 @@ library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(lubridate)  # for date handling
-
+library(patchwork)
 
 #Ask Michio For list of stream temp Locations, if possible
 
@@ -20,70 +20,76 @@ hig <- read.csv("Higurezawa.csv")
 
 #hig$Time <- as.Date(hig$Time)
 hig$date <- as.Date(hig$Time, format = '%m/%d/%y')
+hig$juldate <- as.integer(format(hig$date, "%j"))
 hig$Temperature <- as.numeric(hig$Temperature)
 
 
 #?as.Date
 
 hig_avg <- hig %>%
-  group_by(date) %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
+hig_avg <- hig_avg[-1,]
 
 
-
-hig_plot <- ggplot(hig_avg, aes(x = date, y = avg_temp)) +
+hig_plot <- ggplot(hig_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "Higurezawa Average Daily Temperature",
+  geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
+  labs(title = "Higurezawa AvgDT",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
-
+hig_plot
 
 ###############################Karibetsu US#####################################
 KarUS <- read.csv("KaribetsuUS.csv", header = T)
 KarUS$date <- as.Date(KarUS$Time, format = '%m/%d/%y')
+KarUS$juldate <- as.integer(format(KarUS$date, "%j"))
 KarUS$Temperature <- as.numeric(KarUS$Temperature)
 
 KarUS_avg <- KarUS %>%
-  group_by(date) %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
 
 
 
-KarUS_plot <- ggplot(KarUS_avg, aes(x = date, y = avg_temp)) +
+KarUS_plot <- ggplot(KarUS_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "Karibetsu Average Daily Temperature",
+  geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
+  labs(title = "Karibetsu Upper AvgDT",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
-
+KarUS_plot
 ############################OOM Oomagari#################################################
 OOM <- read.csv("OOM.csv")
 OOM$date <- as.Date(OOM$Time, format = '%m/%d/%y')
+OOM$juldate <- as.integer(format(OOM$date, "%j"))
 OOM$Temperature <- as.numeric(OOM$Temperature)
 
 
 
 
 OOM_avg <- OOM %>%
-  group_by(date) %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
 
 
 
-OOM_plot <- ggplot(OOM_avg, aes(x = date, y = avg_temp)) +
+OOM_plot <- ggplot(OOM_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "OOM Average Daily Temperature",
+  geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
+  labs(title = "Oomagari River AvgDT",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
-
+OOM_plot
 
 
 #####################Karibetsu Weir#############################################
@@ -92,68 +98,199 @@ Karw$date <- as.Date(Karw$Time, format = '%m/%d/%y')
 Karw$juldate <- as.integer(format(Karw$date, "%j"))
 Karw$Temperature <- as.numeric(Karw$Temperature)
 
+
+
 Karw_avg <- Karw %>%
   group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 2))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
+
 
 
 
 KarW_plot <- ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
   geom_line(aes(color = '2023')) +
-  geom_line(aes(y = fut_avg_temp, color = 'Future'), linetype = 'dashed') +
-  labs(#title = "Karibetsu Average Daily Temperature",
+  geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
+  labs(title = "Karibetsu Weir AvgDT",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 
   theme(
     legend.position = c(0.8, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Future" = "black"))
+  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+KarW_plot
+
 
 ################Mokeuni River ###############
+
+#
+
 mor <- read.csv("MOR_2023-2024.csv", header = T)
 mor$date <- as.Date(mor$Time, format = '%m/%d/%y')
+mor$juldate <- as.integer(format(mor$date, "%j"))
 mor$Temperature <- as.numeric(mor$Temperature)
 
 mor_avg <- mor %>%
-  group_by(date) %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
 
-
-
-mor_plot <- ggplot(mor_avg, aes(x = date, y = avg_temp)) +
-  geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "Mokeuni Average Daily Temperature",
-       x = "Date",
+mor_plot <- ggplot(mor_avg, aes(x = juldate, y = avg_temp)) +
+  geom_line(aes(color = '2023')) +
+  geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
+  labs(title = "Mokeuni River AvgDT",
+       x = "Julian Day",
        y = "Temperature (°C)") + 
-  theme_minimal()
-
-
+  theme_minimal() + 
+  theme(
+    legend.position = c(0.8, 0.2),
+    legend.title = element_blank()) +
+  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+mor_plot
 
 ################ Furukawa Bridge #########
 
+Fur <- read.csv("FUR_2023_10min.csv", header = T)
+Fur$date <- as.Date(Fur$Time, format = '%m/%d/%y')
+Fur$juldate <- as.integer(format(Fur$date, "%j"))
+Fur$Temperature <- as.numeric(Fur$Temperature)
 
-mor <- read.csv("MOR_2023-2024.csv", header = T)
-mor$date <- as.Date(mor$Time, format = '%m/%d/%y')
-mor$Temperature <- as.numeric(mor$Temperature)
-
-mor_avg <- mor %>%
-  group_by(date) %>%
+Fur_avg <- Fur %>%
+  group_by(juldate) %>%
   summarize(avg_temp = mean(Temperature),
-            fut_avg_temp = (mean(Temperature) + 1.5))
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
 
 
 
-mor_plot <- ggplot(mor_avg, aes(x = date, y = avg_temp)) +
+Fur_plot <- ggplot(Fur_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
-  geom_line(aes(x = date, y = fut_avg_temp), linetype = 'dashed') +
-  labs(title = "Mokeuni Average Daily Temperature",
-       x = "Date",
+  geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
+  labs(title = "Furukawa AvgDT",
+       x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal()
+Fur_plot
+
+################ Sansen River ######################
+
+#
+
+San <- read.csv("SANR_2023-2024.csv", header = T)
+San$date <- as.Date(San$Time, format = '%m/%d/%y')
+San$juldate <- as.integer(format(San$date, "%j"))
+San$Temperature <- as.numeric(San$Temperature)
+
+San_avg <- San %>%
+  group_by(juldate) %>%
+  summarize(avg_temp1 = mean(Temperature),
+            avg_temp2 = mean(Temperature),
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp1 = max(Temperature),
+            max_temp2 = max(Temperature))
+
+San_avg$avg_temp1[187:296] <- NA 
+San_avg$avg_temp2[1:186] <- NA
+
+San_avg$max_temp1[187:296] <- NA 
+San_avg$max_temp2[1:186] <- NA
+
+
+
+
+
+San_plot <- ggplot(San_avg, aes(x = juldate, y = avg_temp)) +
+  geom_line(aes(y = avg_temp1, color = '2023')) +
+  geom_line(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
+  geom_line(aes(y = avg_temp2, color = '2023')) +
+  geom_line(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
+  labs(title = "Sansen River AvgDT",
+       x = "Julian Day",
+       y = "Temperature (°C)") + 
+  theme_minimal() + 
+  theme(
+    legend.position = c(0.8, 0.2),
+    legend.title = element_blank()) +
+  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+San_plot
+################### Shobu River ##################### 
+
+#
+
+Shor <- read.csv("SHOR_2023-2024.csv", header = T)
+Shor$date <- as.Date(Shor$Time, format = '%m/%d/%y')
+Shor$juldate <- as.integer(format(Shor$date, "%j"))
+Shor$Temperature <- as.numeric(Shor$Temperature)
+
+Shor_avg <- Shor %>%
+  group_by(juldate) %>%
+  summarize(avg_temp = mean(Temperature),
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp = max(Temperature))
+
+
+
+Shor_plot <- ggplot(Shor_avg, aes(x = juldate, y = avg_temp)) +
+  geom_line(aes(color = '2023')) +
+  geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
+  labs(title = "Shobu River AvgDT",
+       x = "Julian Day",
+       y = "Temperature (°C)") + 
+  theme_minimal() + 
+  theme(
+    legend.position = c(0.8, 0.2),
+    legend.title = element_blank()) +
+  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+Shor_plot
+
+############## Sarufutsu Upper #####################
+
+
+#
+
+SRU <- read.csv("SR3_2023-2024.csv", header = T)
+SRU$date <- as.Date(SRU$Time, format = '%m/%d/%y')
+SRU$juldate <- as.integer(format(SRU$date, "%j"))
+SRU$Temperature <- as.numeric(SRU$Temperature)
+
+SRU_avg <- SRU %>%
+  group_by(juldate) %>%
+  summarize(avg_temp1 = mean(Temperature),
+            avg_temp2 = mean(Temperature),
+            fut_avg_temp = (mean(Temperature) + 2),
+            max_temp1 = max(Temperature),
+            max_temp2 = max(Temperature))
+
+SRU_avg$avg_temp1[187:296] <- NA 
+SRU_avg$avg_temp2[1:186] <- NA
+
+SRU_avg$max_temp1[187:296] <- NA 
+SRU_avg$max_temp2[1:186] <- NA
+
+SRU_plot <- ggplot(SRU_avg, aes(x = juldate, y = avg_temp)) +
+  geom_path(aes(y = avg_temp1, color = '2023')) +
+  geom_path(aes(y = avg_temp2, color = '2023')) +
+  geom_path(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
+  geom_path(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
+  labs(title = "Sarufutsu River Upper AvgDT",
+       x = "Julian Day",
+       y = "Temperature (°C)") + 
+  theme_minimal() + 
+  theme(
+    legend.position = c(0.8, 0.2),
+    legend.title = element_blank()) +
+  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+SRU_plot
+
+
+
+
+
+Fur_plot + hig_plot + KarUS_plot + KarW_plot + mor_plot + 
+  OOM_plot + San_plot + Shor_plot + SRU_plot
 
 
 
@@ -166,73 +303,6 @@ mor_plot <- ggplot(mor_avg, aes(x = date, y = avg_temp)) +
 
 
 
-library(ggplot2)
-library(dplyr)
-
-setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
-
-################################################################################
-#Higurezawa
-################################################################################
 
 
-hig <- read.csv("Higurezawa.csv")
 
-hig$Time <- as.POSIXct(hig$Time, format = "%m/%d/%Y %H:%M:%S")
-hig$date <- as.Date(hig$Time)
-hig$timeint <- as.POSIXlt(hig$Time)
-hig$timeint <- format(hig$time, "%H:%M:%S")
-
-hig_daily_avg <- hig %>%
-  group_by(date) %>%
-  summarise(avg_temperature = mean(Temperature, na.rm = TRUE))
-
-ggplot(hig_daily_avg, aes(x = date, y = avg_temperature)) +
-  geom_line() +
-  labs(title = "Average Daily Temperature", x = "Date", y = "Temperature (°C)")
-################################################################################
-
-################################################################################
-#Karibetsu US
-################################################################################
-KarUS <- read.csv("KaribetsuUS.csv")
-
-KarUS$Time <- as.POSIXct(KarUS$Time, format = "%m/%d/%Y %H:%M:%S")
-KarUS$date <- as.Date(KarUS$Time)
-KarUS$timeint <- as.POSIXlt(KarUS$Time)
-KarUS$timeint <- format(KarUS$time, "%H:%M:%S")
-
-KarUSdaily_avg <- KarUS %>%
-  group_by(date) %>%
-  summarise(avg_temperature = mean(Temperature, na.rm = TRUE))
-
-ggplot(KarUSdaily_avg, aes(x = date, y = avg_temperature)) +
-  geom_line() +
-  labs(title = "Average Daily Temperature", x = "Date", y = "Temperature (°C)")
-
-################################################################################
-
-################################################################################
-#OOM
-################################################################################
-OOM <- read.csv("OOM.csv")
-
-OOM$Time <- as.POSIXct(OOM$Time, format = "%m/%d/%Y %H:%M:%S")
-OOM$date <- as.Date(OOM$Time)
-OOM$timeint <- as.POSIXlt(OOM$Time)
-OOM$timeint <- format(OOM$time, "%H:%M:%S")
-
-OOM_daily_avg <- OOM %>%
-  group_by(date) %>%
-  summarise(avg_temperature = mean(Temperature, na.rm = TRUE))
-
-ggplot(OOM_daily_avg, aes(x = date, y = avg_temperature)) +
-  geom_line() +
-  labs(title = "Average Daily Temperature", x = "Date", y = "Temperature (°C)")
-
-################################################################################
-
-################################################################################
-#OOM
->>>>>>> 4ab97b844f7b4f7c69d7f3d9be8f4017901363c7
-################################################################################

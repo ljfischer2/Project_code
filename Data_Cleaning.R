@@ -148,10 +148,10 @@ two_year_data_table <- two_year_data %>%
   select(FishID, Species,mass, vol, Method) %>%
   group_by(FishID, Species, mass, vol, Method) %>%
   mutate(FishID = FishID,
-            Species = Species,
-            Mass = mass,
-            Volume = vol,
-            Method = Method)
+         Species = Species,
+         Mass = mass,
+         Volume = vol,
+         Method = Method)
 #write.csv(two_year_data_table, 'two_year_data_table.csv')
 
 #two_year_data$rate <- abs(two_year_data$rate)
@@ -340,7 +340,7 @@ final_df$day[final_df$trial == 3 & final_df$rep >= 19] <- 2
 
 
 final_df <- read.csv('final_df.csv')
-  
+
 
 
 
@@ -399,15 +399,15 @@ data_2023$mass_corrected <- data_2023$mass_corrected / 60 #back to mg/kg/min
 
 data_2023_clean <- data_2023 %>%
   filter(!FishID %in% 'Ito15') %>%
-  select(FishID, Species, temp_bin, rate_ggd, rate_final,
-                mass_corrected, trial)
+  select(FishID, Species, temp_bin, rate_output, rate_final,
+         mass_corrected, trial)
 
 
 #write.csv(data_2023_clean, 'data_2023_clean.csv')
 
 
 temp_counts <- data_2023_clean %>% 
-  group_by(Species, temp_bin) %>%
+  group_by(Species, FishID, temp_bin) %>%
   count()
 
 
