@@ -13,7 +13,7 @@ setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Stream Te
 
 #### Locations and descriptions of temp sites
 locations <- read.csv('eDNA_temp_sites.csv')
-locations$Description.EN
+#locations$Description.EN
 
 ##########################Higurezawa############################################
 hig <- read.csv("Higurezawa.csv")
@@ -37,7 +37,7 @@ hig_avg <- hig_avg[-1,]
 hig_plot <- ggplot(hig_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
-  labs(title = "Higurezawa AvgDT",
+  labs(title = "Higurezawa",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
@@ -60,7 +60,7 @@ KarUS_avg <- KarUS %>%
 KarUS_plot <- ggplot(KarUS_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
-  labs(title = "Karibetsu Upper AvgDT",
+  labs(title = "Karibetsu Upper",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
@@ -85,7 +85,7 @@ OOM_avg <- OOM %>%
 OOM_plot <- ggplot(OOM_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
-  labs(title = "Oomagari River AvgDT",
+  labs(title = "Oomagari River",
        x = "Date",
        y = "Temperature (°C)") + 
   theme_minimal()
@@ -110,17 +110,26 @@ Karw_avg <- Karw %>%
 
 
 KarW_plot <- ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2023')) +
+  geom_line(aes(color = 'Average')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
-  labs(title = "Karibetsu Weir AvgDT",
+#  geom_hline(aes(yintercept = 29.48),
+#             linewidth = 0.9, linetype = 'solid') +
+#  geom_hline(aes(yintercept = 29.02),
+#             linewidth = 0.9, linetype = 'dotted') +
+  labs(title = "Karibetsu Weir",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 
   theme(
+    text = element_text(size = 14),
     legend.position = c(0.8, 0.2),
-    legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black"))
+    legend.title = element_blank()) + 
+  scale_color_manual(values = c("Average" = "black", "Max" = "black"))
+#                                'Ito' = 'solid', 'Masu' = 'dotted'))
 KarW_plot
+
+
+
 
 
 ################Mokeuni River ###############
@@ -141,12 +150,15 @@ mor_avg <- mor %>%
 mor_plot <- ggplot(mor_avg, aes(x = juldate, y = avg_temp)) +
   geom_line(aes(color = '2023')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
-  labs(title = "Mokeuni River AvgDT",
+  geom_hline(aes(yintercept = 25),
+             linewidth = 0.9, linetype = 'solid') +
+  labs(title = "Mokeuni River",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 
   theme(
-    legend.position = c(0.8, 0.2),
+    text = element_text(size = 14),
+    legend.position = c(0.7, 0.2),
     legend.title = element_blank()) +
   scale_color_manual(values = c("2023" = "black", "Max" = "black"))
 mor_plot
@@ -169,7 +181,7 @@ Fur_avg <- Fur %>%
 Fur_plot <- ggplot(Fur_avg, aes(x = juldate, y = avg_temp)) +
   geom_line() +
   geom_line(aes(x = juldate, y = max_temp), linetype = 'dashed') +
-  labs(title = "Furukawa AvgDT",
+  labs(title = "Furukawa",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal()
@@ -207,7 +219,7 @@ San_plot <- ggplot(San_avg, aes(x = juldate, y = avg_temp)) +
   geom_line(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
   geom_line(aes(y = avg_temp2, color = '2023')) +
   geom_line(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
-  labs(title = "Sansen River AvgDT",
+  labs(title = "Sansen River",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 
@@ -236,7 +248,7 @@ Shor_avg <- Shor %>%
 Shor_plot <- ggplot(Shor_avg, aes(x = juldate, y = avg_temp)) +
   geom_line(aes(color = '2023')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
-  labs(title = "Shobu River AvgDT",
+  labs(title = "Shobu River",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 
@@ -275,7 +287,7 @@ SRU_plot <- ggplot(SRU_avg, aes(x = juldate, y = avg_temp)) +
   geom_path(aes(y = avg_temp2, color = '2023')) +
   geom_path(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
   geom_path(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
-  labs(title = "Sarufutsu River Upper AvgDT",
+  labs(title = "Sarufutsu River Upper",
        x = "Julian Day",
        y = "Temperature (°C)") + 
   theme_minimal() + 

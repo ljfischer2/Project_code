@@ -386,6 +386,21 @@ write.csv(final_df_2, 'Clean_final_df.csv')
 
 
 
+
+raw_df <- read.csv('raw_df.csv')
+
+
+report_table <- raw_df %>%
+  group_by(FishID, Species, mass, vol, trial) %>%
+  select(FishID, Species, mass, vol, trial) %>%
+  count(FishID) %>%
+  select(-n)
+  
+names(report_table) <- c('Fish ID', 'Species', 'Fish Mass', 'Chamber Volume', 'Trial')
+  
+#write.csv(report_table, 'Final_table.csv')
+  
+
 ########## Mass correction for static ##########
 
 data_2023 <- read.csv('Resp_23_data.csv')
@@ -403,7 +418,17 @@ data_2023_clean <- data_2023 %>%
          mass_corrected, trial)
 
 
-#write.csv(data_2023_clean, 'data_2023_clean.csv')
+Fish_table_2023 <- data_2023 %>%
+  filter(!FishID %in% 'Ito15') %>%
+  group_by(FishID, Species, mass, vol) %>%
+  select(FishID, Species, mass, vol) %>%
+  count(FishID) %>%
+  select(-n)
+
+names(Fish_table_2023) <- c('FishID', 'Species', 'Fish Mass', 'Chamber Volume')
+
+
+write.csv(Fish_table_2023, '2023_table.csv')
 
 
 temp_counts <- data_2023_clean %>% 

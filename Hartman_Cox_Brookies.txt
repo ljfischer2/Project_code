@@ -1,0 +1,13 @@
+#DataThief C:\Users\heref\Documents\Project stuff\LucasProject\Repo_Backup\Project_code\Figures\Hartman_Cox_Brookies.jpg Tuesday 14-Apr-2026 12:45:51 PM
+11.256, 8.781e-3
+11.282, 6.521e-3
+11.28, 5.076e-3
+6.2, 5.062e-3
+6.198, 3.696e-3
+6.226, 2.592e-3
+15.56, 1.255e-2
+15.496, 1.008e-2
+15.492, 8.109e-3
+20.163, 1.516e-2
+20.1, 1.311e-2
+20.127, 1.149e-2

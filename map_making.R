@@ -59,7 +59,7 @@ point_sf <- st_as_sf(point_path, coords = c("lon", "lat"), crs = 4326)
 
 
 
-par(mfrow = c(1, 2))
+#par(mfrow = c(1, 2))
 
 
 
@@ -69,12 +69,14 @@ x_labels <- paste0(abs(x_ticks), "°E")
 y_labels <- paste0(y_ticks, "°N")
 
 plot(st_geometry(coast),   # map in use (All of Hokkaido)
-     col = "black",
+     border = 'black',
      axes = FALSE,
      asp = 1)
 axis(1, at = x_ticks,  labels = x_labels)
 axis(2, at = y_ticks, labels = y_labels)
-plot(st_geometry(sarshed), col = "black", border = NA, add = TRUE)
+#plot(st_geometry(sarshed), col = "black", border = NA, add = TRUE)
+
+box()
 
 
 #plot(st_geometry(sarshed), col = "grey", border = NA, axes = T)     #same as below but worse
@@ -94,8 +96,19 @@ axis(1, at = x_ticks,  labels = x_labels)
 axis(2, at = y_ticks, labels = y_labels)
 box()
 plot(st_geometry(sarriver), add = TRUE)
-plot(st_geometry(coast), add = TRUE)
+plot(st_geometry(coast), add = TRUE, border = 'black')
 plot(st_geometry(point_sf), add = TRUE, pch = 16, col = "black", cex = 1.25)
+plot(st_geometry(Kar_sf), add = T, pch = 16, col = 'red', cex = 1.5)
+
+#### Bonus point for Karibetsu Weir
+KarW_latlong <- c(locations$Latitude[7], locations$Longitude[7]) #locations is from the stream_temp file.
+lat <- KarW_latlong[1]
+lon <- KarW_latlong[2]
+
+df <- data.frame(lon = lon,
+                 lat = lat)
+
+Kar_sf <- st_as_sf(df, coords = c("lon", "lat"), crs = 4326)
 
 
 
@@ -103,29 +116,28 @@ plot(st_geometry(point_sf), add = TRUE, pch = 16, col = "black", cex = 1.25)
 
 
 
+############## Temp Logger locations ###########
+
+setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Stream Temps")
 
 
+#### Locations and descriptions of temp sites
+locations <- read.csv('eDNA_temp_sites.csv')
+locations <- locations %>%
+  filter(Temperature == 1)
+
+lat <- locations$Latitude
+lon <- locations$Longitude
+
+temp_locations <- data.frame(lat = lat,
+                             lon = lon)
+temp_sf <- st_as_sf(temp_locations, coords = c("lon", "lat"), crs = 4326)
 
 
-
-################# redundant code? #############
-coast_sarshed <- coast %>%
-  st_join(sarshed, by = "geometry")
-
-
-coast_sp <- as(coast, 'Spatial')
-plot(coast_sp)
-
-
-
-
-
-
-
-
-
-sarcocoast_spsarcoast <- coast %>%
-  filter(団体名 == '猿払村')
-
-sarcoast_sp <- as(sarcoast, 'Spatial')
-
+plot(st_geometry(sarshed), col = "lightgrey", border = NA, axes = FALSE, asp = 1)  #final sarufutsu map?
+axis(1, at = x_ticks,  labels = x_labels)
+axis(2, at = y_ticks, labels = y_labels)
+box()
+plot(st_geometry(sarriver), add = TRUE)
+plot(st_geometry(coast), add = TRUE, border = 'black')
+plot(st_geometry(temp_sf), add = T, pch = 16, col = 'black', cex = 1.2)
