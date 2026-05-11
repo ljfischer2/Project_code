@@ -518,7 +518,7 @@ two_year_data$day[
     two_year_data$rep >= 19
 ] <- 2
 
-
+write.csv(two_year_data, 'two_year_data.csv')
 
 
 ################ Testing difference in the trials
@@ -598,6 +598,39 @@ plot5 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
        y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
   scale_shape_manual(values = c( '1' = 16,  '2' = 17))
 plot5
+
+
+
+
+
+
+
+plot5 <- ggplot(plot_data, aes(x = temp_bin, y = rate)) +
+  geom_point(data = plot_data_int, aes(shape = factor(day), color = FishID), size = 3) +
+  geom_point(data = plot_data_int, aes(shape = factor(day), color = FishID), size  = 2) +
+  geom_line(data = line_vals_masu, aes(x = x, y = y),
+            color = "black", linewidth = 0.8, linetype = 'dashed') + 
+  xlim(5,25) + 
+  ylim(0,12) +
+  theme_minimal() + 
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title.y = element_text(size = 12)) +
+  labs(shape = "Data Type",
+       x = 'Temperature (°C)',
+       y = expression("Metabolic Rate (mg O"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
+  scale_shape_manual(values = c( '1' = 16,  '2' = 17))
+plot5
+
+
+
+
+
+
+
+
+
 
 
 

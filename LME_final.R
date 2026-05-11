@@ -32,6 +32,16 @@ df_2023_masu <- df_2023 %>%
 ################## Fitting models for every DF #############
 
 
+
+
+day_model <- lme(log(rate_ggd) ~ temp_bin + day, random =  ~1 | FishID,
+                 data = two_year_data_Ito_int)
+
+summary(day_model)
+
+day_model <- lme(log(rate_ggd) ~ temp_bin + day, random =  ~1 | FishID,
+                 data = two_year_data_Masu_int)
+summary(day_model)
 #intermittent
 Itomodel_int <- lme(log(mass_corrected) ~ temp_bin + time, random =  ~1 | FishID,
                     data = final_df_ito)
@@ -250,9 +260,9 @@ ito_plot <- ggplot(final_df_ito, aes(x = temp_bin, y = mass_corrected)) +
        linetype = 'Type',
        x = 'Temperature (°C)',
        y = expression("Metabolic Rate (mgO"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
-  scale_shape_manual(values = c("Intermittent" = 16, "Static" = 17)) + 
-  scale_linetype_manual(values = c("Intermittent" = "solid",
-                                   "Static" = "dashed")) + 
+  scale_shape_manual(values = c("Static" = 17, "Intermittent" = 16)) + 
+  scale_linetype_manual(values = c("Static" = "dashed",
+                                   "Intermittent" = "solid")) + 
   theme(
     text = element_text(size = 14),
     legend.position = 'none'
@@ -309,10 +319,12 @@ labs(#title = "Masu Static & Intermittent Models",
      shape = 'Type',
      linetype = 'Type',
      y = expression("Metabolic Rate (mgO"[2]*" kg"^{-1}*" min"^{-1}*")")) + 
-  scale_shape_manual(values = c("Intermittent" = 16, "Static" = 17)) +
-  scale_linetype_manual(values = c("Intermittent" = "solid",
-                                   "Static" = "dashed")) + 
+  scale_shape_manual(values = c("Static" = 17,
+                                "Intermittent" = 16)) +
+  scale_linetype_manual(values = c("Static" = "dashed",
+                                   "Intermittent" = "solid")) + 
   theme(
+    legend.position = 'none',
     text = element_text(size = 14)
 )
   
@@ -435,14 +447,14 @@ brook_data$mass_corrected <- brook_data$mass_corrected / 1000 / 1000 / (1/24)
 
 # Plotting
 ggplot(df_2023_masu, aes(x = temp_bin, y = mass_corrected_ggd)) +
-  geom_point(data = df_2023_masu, color = 'red2', shape = 16,
-             size = 2.5) +
-  geom_point(data = df_2023_ito, color = 'yellow2', shape = 16,
-             size = 2.5) +
-  geom_point(data = rainbow_data, color = 'green3',
+#  geom_point(data = df_2023_masu, color = 'red2', shape = 16,
+#             size = 2.5) +
+#  geom_point(data = df_2023_ito, color = 'goldenrod', shape = 16,
+#             size = 2.5) +
+  geom_point(data = rainbow_data, color = 'black',
              aes(y = mass_corrected, x = Temperature),
              size = 2.5,shape = 15) +
-  geom_point(data = brook_data, color = 'blue',
+  geom_point(data = brook_data, color = 'black',
              aes(y = mass_corrected, x = Temperature),
              size = 2.5,shape = 17) +
   geom_line(data = line_vals_masu, aes(x = x, y = y, linetype = 'Masu'),
@@ -461,6 +473,7 @@ ggplot(df_2023_masu, aes(x = temp_bin, y = mass_corrected_ggd)) +
   scale_linetype_manual(values = c("Masu" = "solid",
                                    'Ito' = 'dotted')) + 
   theme(
+    legend.position = 'none',
     text = element_text(size = 14)
   )
 
