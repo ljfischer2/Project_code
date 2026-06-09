@@ -382,7 +382,7 @@ final_df_2 <- final_df %>%
   select(FishID, Species, temp_bin, rate_ggd, rate_final,
          rep, trial, bath, mass_corrected, time)
 
-write.csv(final_df_2, 'Clean_final_df.csv')
+write.csv(final_df, 'Clean_final_df.csv')
 
 
 
@@ -413,9 +413,15 @@ data_2023$mass_corrected <- data_2023$no_mass_rate * (((data_2023$mass/1000)/0.1
 data_2023$mass_corrected <- data_2023$mass_corrected / 60 #back to mg/kg/min
 
 data_2023_clean <- data_2023 %>%
+  filter(!FishID %in% 'Ito15') 
+
+
+data_2023_clean <- data_2023 %>%
   filter(!FishID %in% 'Ito15') %>%
   select(FishID, Species, temp_bin, rate_output, rate_final,
          mass_corrected, trial)
+
+write.csv(data_2023_clean, '2023_resp_data.csv')
 
 
 Fish_table_2023 <- data_2023 %>%
@@ -428,7 +434,7 @@ Fish_table_2023 <- data_2023 %>%
 names(Fish_table_2023) <- c('FishID', 'Species', 'Fish Mass', 'Chamber Volume')
 
 
-write.csv(Fish_table_2023, '2023_table.csv')
+#write.csv(Fish_table_2023, '2023_table.csv')
 
 
 temp_counts <- data_2023_clean %>% 

@@ -9,7 +9,7 @@ require(gridExtra)
 
 setwd("C:/Users/heref/Documents/Project stuff/LucasProject/Repo_Backup/Project_code")
 
-############# importing cleanded data ###########
+############# importing cleaned data ###########
 
 
 final_df <- read.csv('Clean_final_df.csv')
@@ -42,6 +42,11 @@ summary(day_model)
 day_model <- lme(log(rate_ggd) ~ temp_bin + day, random =  ~1 | FishID,
                  data = two_year_data_Masu_int)
 summary(day_model)
+
+
+
+
+
 #intermittent
 Itomodel_int <- lme(log(mass_corrected) ~ temp_bin + time, random =  ~1 | FishID,
                     data = final_df_ito)

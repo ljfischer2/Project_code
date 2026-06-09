@@ -16,6 +16,7 @@ locations <- read.csv('eDNA_temp_sites.csv')
 #locations$Description.EN
 
 ##########################Higurezawa############################################
+#2024
 hig <- read.csv("Higurezawa.csv")
 
 #hig$Time <- as.Date(hig$Time)
@@ -35,7 +36,7 @@ hig_avg <- hig_avg[-1,]
 
 
 hig_plot <- ggplot(hig_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2024')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Higurezawa",
        x = "Date",
@@ -45,11 +46,12 @@ hig_plot <- ggplot(hig_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.8, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2024" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 hig_plot
 
 ###############################Karibetsu US#####################################
+#2024
 KarUS <- read.csv("KaribetsuUS.csv", header = T)
 KarUS$date <- as.Date(KarUS$Time, format = '%m/%d/%Y')
 KarUS$juldate <- as.integer(format(KarUS$date, "%j"))
@@ -64,7 +66,7 @@ KarUS_avg <- KarUS %>%
 
 
 KarUS_plot <- ggplot(KarUS_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2024')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Karibetsu Upper",
        x = "Date",
@@ -74,10 +76,11 @@ KarUS_plot <- ggplot(KarUS_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.7, 0.1),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2024" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 KarUS_plot
 ############################OOM Oomagari#################################################
+#2024
 OOM <- read.csv("OOM.csv")
 OOM$date <- as.Date(OOM$Time, format = '%m/%d/%Y')
 OOM$juldate <- as.integer(format(OOM$date, "%j"))
@@ -95,7 +98,7 @@ OOM_avg <- OOM %>%
 
 
 OOM_plot <- ggplot(OOM_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2024')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Oomagari River",
        x = "Date",
@@ -105,12 +108,13 @@ OOM_plot <- ggplot(OOM_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.7, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2024" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 OOM_plot
 
 
 #####################Karibetsu Weir#############################################
+#2023
 Karw <- read.csv("KarWeir_2023.csv", header = T)
 Karw$date <- as.Date(Karw$Time, format = '%m/%d/%Y')
 Karw$juldate <- as.integer(format(Karw$date, "%j"))
@@ -128,7 +132,7 @@ Karw_avg <- Karw %>%
 
 
 KarW_plot <- ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2023')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
 #  geom_hline(aes(yintercept = 29.48),
 #             linewidth = 0.9, linetype = 'solid') +
@@ -143,7 +147,7 @@ KarW_plot <- ggplot(Karw_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.8, 0.2),
     legend.title = element_blank()) + 
-  scale_color_manual(values = c("2023" = "black", "Max" = "black",
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black",
                                 'Ito' = 'solid', 'Masu' = 'dotted'))
 KarW_plot
 
@@ -179,7 +183,7 @@ mor_avg <- mor %>%
             max_temp = max(Temperature))
 
 mor_plot <- ggplot(mor_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2023')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Mokeuni River",
        x = "Julian Day",
@@ -189,7 +193,7 @@ mor_plot <- ggplot(mor_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.6, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 mor_plot
 
@@ -209,7 +213,7 @@ mor_2024_avg <- mor_2024 %>%
             max_temp = max(Temperature))
 
 mor_2024_plot <- ggplot(mor_2024_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2024')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Mokeuni River",
        x = "Julian Day",
@@ -219,12 +223,12 @@ mor_2024_plot <- ggplot(mor_2024_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.8, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2024" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 mor_2024_plot
 
 ################ Furukawa Bridge #########
-
+#2023
 Fur <- read.csv("FUR_2023_10min.csv", header = T)
 Fur$date <- as.Date(Fur$Time, format = '%m/%d/%Y')
 Fur$juldate <- as.integer(format(Fur$date, "%j"))
@@ -239,7 +243,7 @@ Fur_avg <- Fur %>%
 
 
 Fur_plot <- ggplot(Fur_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2023')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Furukawa",
        x = "Julian Day",
@@ -249,7 +253,7 @@ Fur_plot <- ggplot(Fur_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.7, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 Fur_plot
 
@@ -300,9 +304,9 @@ acc_sd
 
 
 San_plot <- ggplot(San_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(y = avg_temp1, color = '2023')) +
+  geom_line(aes(y = avg_temp1, color = 'Avg')) +
   geom_line(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
-  geom_line(aes(y = avg_temp2, color = '2023')) +
+  geom_line(aes(y = avg_temp2, color = 'Avg')) +
   geom_line(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
   labs(title = "Sansen River",
        x = "Julian Day",
@@ -312,7 +316,7 @@ San_plot <- ggplot(San_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.9, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 San_plot
 ################### Shobu River 2023 ##################### 
@@ -335,7 +339,7 @@ Shor_avg <- Shor %>%
 
 
 Shor_plot <- ggplot(Shor_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2023')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Shobu River",
        x = "Julian Day",
@@ -345,7 +349,7 @@ Shor_plot <- ggplot(Shor_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.6, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 Shor_plot
 
@@ -375,8 +379,8 @@ SRU_avg <- SRU %>%
 #SRU_avg$max_temp2[1:186] <- NA
 
 SRU_plot <- ggplot(SRU_avg, aes(x = juldate, y = avg_temp)) +
-  geom_path(aes(y = avg_temp1, color = '2023')) +
-  geom_path(aes(y = avg_temp2, color = '2023')) +
+  geom_path(aes(y = avg_temp1, color = 'Avg')) +
+  geom_path(aes(y = avg_temp2, color = 'Avg')) +
   geom_path(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
   geom_path(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
   labs(title = "Sarufutsu River Upper",
@@ -387,7 +391,7 @@ SRU_plot <- ggplot(SRU_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.9, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2023" = "black", "Max" = "black")) + 
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black")) + 
   ylim(0,27)
 SRU_plot
 
@@ -420,8 +424,8 @@ por_avg <- por %>%
 
 
 por_plot <- ggplot(por_avg, aes(x = juldate, y = avg_temp)) +
-  geom_path(aes(y = avg_temp1, color = '2025')) +
-  geom_path(aes(y = avg_temp2, color = '2025')) +
+  geom_path(aes(y = avg_temp1, color = 'Avg')) +
+  geom_path(aes(y = avg_temp2, color = 'Avg')) +
   geom_path(aes(y = max_temp1, color = 'Max'), linetype = 'dashed') +
   geom_path(aes(y = max_temp2, color = 'Max'), linetype = 'dashed') +
   labs(title = "Poronaizawa River",
@@ -431,9 +435,9 @@ por_plot <- ggplot(por_avg, aes(x = juldate, y = avg_temp)) +
   ylim(0,27) +
   theme(
     text = element_text(size = 14),
-    legend.position = c(0.7, 0.2),
+    legend.position = c(0.6, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2025" = "black", "Max" = "black"))
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black"))
 
 por_plot
 
@@ -457,7 +461,7 @@ OOM_2025_avg <- OOM_2025 %>%
 
 
 OOM_2025_plot <- ggplot(OOM_2025_avg, aes(x = juldate, y = avg_temp)) +
-  geom_line(aes(color = '2025')) +
+  geom_line(aes(color = 'Avg')) +
   geom_line(aes(y = max_temp, color = 'Max'), linetype = 'dashed') +
   labs(title = "Oomagari River",
        x = "Date",
@@ -468,7 +472,7 @@ OOM_2025_plot <- ggplot(OOM_2025_avg, aes(x = juldate, y = avg_temp)) +
     text = element_text(size = 14),
     legend.position = c(0.7, 0.2),
     legend.title = element_blank()) +
-  scale_color_manual(values = c("2025" = "black", "Max" = "black"))
+  scale_color_manual(values = c("Avg" = "black", "Max" = "black"))
 OOM_2025_plot
 
 OOM_2025_plot + por_plot
